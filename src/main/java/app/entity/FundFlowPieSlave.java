@@ -17,20 +17,20 @@ public class FundFlowPieSlave {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
     private String code;
-    private Integer totalBuyDang; //买入总单数
-    private Integer totalSellDang; //卖出总单数
+    private Double totalBuyDang; //买入总单数
+    private Double totalSellDang; //卖出总单数
 
-    private Integer totalBuyGu; // 买入总股数
-    private Integer sanBuyGu; //散户买入
-    private Integer zhongBuyGu; //中户买入
-    private Integer daBuyGu; //大户买入
-    private Integer jiBuyGu; //机构买入
+    private Double totalBuyGu; // 买入总股数
+    private Double sanBuyGu; //散户买入
+    private Double zhongBuyGu; //中户买入
+    private Double daBuyGu; //大户买入
+    private Double jiBuyGu; //机构买入
 
-    private Integer totalSellGu; //卖出总股数
-    private Integer sanSellGu; //散户买入
-    private Integer zhongSellGu; // 买入总股数
-    private Integer daSellGu; //大户买入
-    private Integer jiSellGu; //机构买入
+    private Double totalSellGu; //卖出总股数
+    private Double sanSellGu; //散户买入
+    private Double zhongSellGu; // 买入总股数
+    private Double daSellGu; //大户买入
+    private Double jiSellGu; //机构买入
 
     private Double totalBuyShou;//买入总均手
     private Double sanBuyShou; //

@@ -65,10 +65,26 @@ public class HuanShouLvService {
     public void postConstruct() {
        /* fetch();
         save2DB();*/
-        splitDate("");
+        //splitDate("");
     }
 
 
+    public FundFlowPie findOne(Long id){
+        return  fundFlowPieRepository.findOne(id);
+    }
+   /**
+    * 当一只股票符合，买单均手>卖单均手，
+    大户买入占比>大户卖出占比，
+    机构买入占比>机构卖出占比；
+    再观察被动买单均手>=被动卖单均手，
+    同时被动买单均手>=主动买单均手，
+    说明主力看好后市，
+    压盘吃货。
+
+    * */
+    public void press(){
+
+    }
 
     public void splitDate(String detail){
         String[] fields = AppUtils.fields;

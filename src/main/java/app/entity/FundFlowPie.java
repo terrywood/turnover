@@ -13,7 +13,7 @@ import java.util.Date;
  */
 @Data
 @Entity
-public class FundFlowPie {
+public class FundFlowPie implements java.io.Serializable {
 
     @JsonIgnore
     @Id
@@ -22,6 +22,9 @@ public class FundFlowPie {
 
     @JsonFormat(pattern = "yyyyMMdd", timezone="GMT+8")
     Date date;
+
+    public FundFlowPie() {
+    }
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
@@ -42,5 +45,21 @@ public class FundFlowPie {
     Double daPrice;
     Double zhongPrice;
     Double shaPrice;
+
+    //@OneToOne(fetch = FetchType.LAZY, mappedBy = "fundFlowPie", cascade = CascadeType.ALL)
+
+    @OneToOne(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
+    @PrimaryKeyJoinColumn
+    private  FundFlowPieDetail fundFlowPieDetail;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
+    @PrimaryKeyJoinColumn
+    private  FundFlowPieMaster fundFlowPieMaster;
+
+    @OneToOne(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
+    @PrimaryKeyJoinColumn
+    private  FundFlowPieSlave fundFlowPieSlave;
+
+
 
 }

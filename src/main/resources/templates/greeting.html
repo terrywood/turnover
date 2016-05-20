@@ -34,8 +34,10 @@
             <form class="form-horizontal" action="save" method="post">
                 <fieldset>
                     <legend>券商 Session Info</legend>
-                    <label>${name} ID</label>
+                    <label th:text="${name}"> ID</label>
+
                     <textarea id="sid" name="sid" class="form-control" rows="3"></textarea>
+
                     <label>Cookie</label>
                     <textarea id="cookie" name="cookie" class="form-control" rows="3"></textarea>
                     <label style="padding-bottom:30px"></label>
