@@ -1,6 +1,7 @@
 package app.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
@@ -14,11 +15,12 @@ import java.util.Date;
 @Entity
 public class FundFlowPie {
 
+    @JsonIgnore
     @Id
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @JsonFormat(pattern = "yyyyMMdd")
+    @JsonFormat(pattern = "yyyyMMdd", timezone="GMT+8")
     Date date;
 
     @Lob
@@ -27,13 +29,18 @@ public class FundFlowPie {
     String detail;
 
     @JsonProperty(value = "close_px")
-    double close;
+    Double close;
     @JsonProperty(value = "hslddx")
-    double ddx;
+    Double ddx;
     @JsonProperty(value = "hslddy")
-    double ddy;
+    Double ddy;
 
-
+    @JsonIgnore
     String code;
+
+    Double jiPrice;
+    Double daPrice;
+    Double zhongPrice;
+    Double shaPrice;
 
 }
