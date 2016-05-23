@@ -14,15 +14,45 @@
 </head>
 <body>
 
-<div class="container-fluid">
-    <div class="row-fluid">
-        <div class="col-sm-6 col-md-4">
-            <div id="container" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
+<div class="container">
+    <div class="row">
+        <div class="col-sm-6 col-md-6">
+            <div id="container" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+            <table class="table table-condensed">
+                <tr class="active">
+                    <th>买入</th>
+                    <th></th>
+                    <th>卖出</th>
+                </tr>
+                <tr class="">
+                    <td th:text="${d.jiBuyDang  }+'%'">1</td>
+                    <td>机构</td>
+                    <td th:text="${d.jiSellDang  }+'%'">2</td>
+                </tr>
+                <tr class="warning">
+                    <td th:text="${d.daBuyDang  }+'%'">1</td>
+                    <td>大户</td>
+                    <td th:text="${d.daSellDang  }+'%'">2</td></tr>
+                <tr class="">
+                    <td th:text="${d.zhongBuyDang  }+'%'">1</td>
+                    <td>中户</td>
+                    <td th:text="${d.zhongSellDang  }+'%'">2</td></tr>
+                <tr class="info">
+                    <td th:text="${d.sanBuyDang  }+'%'">1</td>
+                    <td>散户</td>
+                    <td th:text="${d.sanSellDang  }+'%'">2</td>
+                </tr>
+                <tr class="">
+                    <td th:text="${#numbers.formatInteger(d.totalBuyDang ,1) }">1</td>
+                    <td>总单数</td>
+                    <td th:text="${#numbers.formatInteger(d.totalSellDang ,1) }">2</td>
+                </tr>
+            </table>
 
         </div>
-        <div class="col-sm-6 col-md-4">
+        <div class="col-sm-6 col-md-6">
             <table class="table">
-                <caption>基本的表格布局</caption>
+               <caption>主饼图</caption>
                 <thead>
                 <tr>
                     <th>买</th>
@@ -71,12 +101,329 @@
 
                 </tbody>
             </table>
+            <table class="table">
+              <!--  <caption>基本的表格布局</caption>-->
+                <thead>
+                <tr>
+                    <th>买</th>
+                    <th>总股数</th>
+                    <th>占比</th>
+                    <th>均手</th>
+                    <th>均价</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>总</td>
+                    <td th:text="${#numbers.formatDecimal(d.totalSellGu / 10000,1,1)+'万'}"></td>
+                    <td >100%</td>
+                    <td th:text="${#numbers.formatInteger(d.totalSellShou,1)}"></td>
+                    <td th:text="${d.totalSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>机</td>
+                    <td th:text="${#numbers.formatDecimal(d.jiSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${d.jiSellDang  }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(d.jiSellShou,1)}"></td>
+                    <td th:text="${d.jiSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>大</td>
+                    <td th:text="${#numbers.formatDecimal(d.daSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${d.daSellDang }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(d.daSellShou,1)}"></td>
+                    <td th:text="${d.daSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>中</td>
+                    <td th:text="${#numbers.formatDecimal(d.zhongSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${d.zhongSellDang }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(d.zhongSellShou,1)}"></td>
+                    <td th:text="${d.zhongSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>散</td>
+                    <td th:text="${#numbers.formatDecimal(d.sanSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${d.sanSellDang  }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(d.sanSellShou,1)}"></td>
+                    <td th:text="${d.sanSellAvg}"></td>
+                </tr>
+
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6 col-md-6">
+            <div id="container2" style="min-width: 300px; height: 300px; margin: 0 auto"></div>
+            <table class="table table-condensed">
+                <tr class="active">
+                    <th>买入</th>
+                    <th></th>
+                    <th>卖出</th>
+                </tr>
+                <tr class="">
+                    <td th:text="${m.jiBuyDang  }+'%'">1</td>
+                    <td>机构</td>
+                    <td th:text="${m.jiSellDang  }+'%'">2</td>
+                </tr>
+                <tr class="warning">
+                    <td th:text="${m.daBuyDang  }+'%'">1</td>
+                    <td>大户</td>
+                    <td th:text="${m.daSellDang  }+'%'">2</td></tr>
+                <tr class="">
+                    <td th:text="${m.zhongBuyDang  }+'%'">1</td>
+                    <td>中户</td>
+                    <td th:text="${m.zhongSellDang  }+'%'">2</td></tr>
+                <tr class="info">
+                    <td th:text="${m.sanBuyDang  }+'%'">1</td>
+                    <td>散户</td>
+                    <td th:text="${m.sanSellDang  }+'%'">2</td>
+                </tr>
+                <tr class="">
+                    <td th:text="${#numbers.formatInteger(m.totalBuyDang ,1) }">1</td>
+                    <td>总单数</td>
+                    <td th:text="${#numbers.formatInteger(m.totalSellDang ,1) }">2</td>
+                </tr>
+            </table>
+
+        </div>
+        <div class="col-sm-6 col-md-6">
+            <table class="table">
+                <caption>副饼图主动买</caption>
+                <thead>
+                <tr>
+                    <th>买</th>
+                    <th>总股数</th>
+                    <th>占比</th>
+                    <th>均手</th>
+                    <th>均价</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>总</td>
+                    <td th:text="${#numbers.formatDecimal(m.totalBuyGu / 10000,1,1)+'万'}"></td>
+                    <td >100%</td>
+                    <td th:text="${#numbers.formatInteger(m.totalBuyShou,1)}"></td>
+                    <td th:text="${m.totalBuyAvg}"></td>
+                </tr>
+                <tr>
+                    <td>机</td>
+                    <td th:text="${#numbers.formatDecimal(m.jiBuyGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.jiBuyDang  }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.jiBuyShou,1)}"></td>
+                    <td th:text="${m.jiBuyAvg}"></td>
+                </tr>
+                <tr>
+                    <td>大</td>
+                    <td th:text="${#numbers.formatDecimal(m.daBuyGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.daBuyDang }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.daBuyShou,1)}"></td>
+                    <td th:text="${m.daBuyAvg}"></td>
+                </tr>
+                <tr>
+                    <td>中</td>
+                    <td th:text="${#numbers.formatDecimal(m.zhongBuyGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.zhongBuyDang }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.zhongBuyShou,1)}"></td>
+                    <td th:text="${m.zhongBuyAvg}"></td>
+                </tr>
+                <tr>
+                    <td>散</td>
+                    <td th:text="${#numbers.formatDecimal(m.sanBuyGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.sanBuyDang  }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.sanBuyShou,1)}"></td>
+                    <td th:text="${m.sanBuyAvg}"></td>
+                </tr>
+
+                </tbody>
+            </table>
+            <table class="table">
+                <!--  <caption>基本的表格布局</caption>-->
+                <thead>
+                <tr>
+                    <th>买</th>
+                    <th>总股数</th>
+                    <th>占比</th>
+                    <th>均手</th>
+                    <th>均价</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr>
+                    <td>总</td>
+                    <td th:text="${#numbers.formatDecimal(m.totalSellGu / 10000,1,1)+'万'}"></td>
+                    <td >100%</td>
+                    <td th:text="${#numbers.formatInteger(m.totalSellShou,1)}"></td>
+                    <td th:text="${m.totalSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>机</td>
+                    <td th:text="${#numbers.formatDecimal(m.jiSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.jiSellDang  }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.jiSellShou,1)}"></td>
+                    <td th:text="${m.jiSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>大</td>
+                    <td th:text="${#numbers.formatDecimal(m.daSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.daSellDang }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.daSellShou,1)}"></td>
+                    <td th:text="${m.daSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>中</td>
+                    <td th:text="${#numbers.formatDecimal(m.zhongSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.zhongSellDang }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.zhongSellShou,1)}"></td>
+                    <td th:text="${m.zhongSellAvg}"></td>
+                </tr>
+                <tr>
+                    <td>散</td>
+                    <td th:text="${#numbers.formatDecimal(m.sanSellGu / 10000,1,1)}+'万'"></td>
+                    <td th:text="${m.sanSellDang  }+'%'"></td>
+                    <td th:text="${#numbers.formatInteger(m.sanSellShou,1)}"></td>
+                    <td th:text="${m.sanSellAvg}"></td>
+                </tr>
+
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
 
 </body>
-
-<script src="/js/pie.js" ></script>
-
+<script type="text/javascript" th:inline="javascript">
+    /*<![CDATA[*/
+    $(function () {
+        $('#container').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: ''
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.y} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: '股数',
+                colorByPoint: true,
+                data: [
+                    {
+                        name: '买机',
+                        y: [[${d.jiBuyDang}]],
+                        sliced: true,
+                        selected: true
+                    },{
+                    name: '买大',
+                    y:  [[${d.daBuyDang}]]
+                }, {
+                    name: '买中',
+                    y: [[${d.zhongBuyDang}]],
+                }, {
+                    name: '买散',
+                    y: [[${d.sanBuyDang}]],
+                }, {
+                        name: '卖机',
+                        y: [[${d.jiSellDang}]],
+                        sliced: true,
+                        selected: true
+                    },  {
+                        name: '卖大',
+                        y:  [[${d.daSellDang}]]
+                    },  {
+                        name: '卖中',
+                        y: [[${d.zhongSellDang}]],
+                    }, {
+                        name: '卖散',
+                        y: [[${d.sanSellDang}]],
+                    }
+                ]
+            }]
+        });
+        $('#container2').highcharts({
+            chart: {
+                plotBackgroundColor: null,
+                plotBorderWidth: null,
+                plotShadow: false,
+                type: 'pie'
+            },
+            title: {
+                text: '主动率  [[${m.masterlv}]]'
+            },
+            tooltip: {
+                pointFormat: '{series.name}: <b>{point.percentage:.1f}%</b>'
+            },
+            plotOptions: {
+                pie: {
+                    allowPointSelect: true,
+                    cursor: 'pointer',
+                    dataLabels: {
+                        enabled: true,
+                        format: '<b>{point.name}</b>: {point.y} %',
+                        style: {
+                            color: (Highcharts.theme && Highcharts.theme.contrastTextColor) || 'black'
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: '股数',
+                colorByPoint: true,
+                data: [
+                    {
+                        name: '买机',
+                        y: [[${m.jiBuyDang}]],
+                        sliced: true,
+                        selected: true
+                    },{
+                        name: '买大',
+                        y:  [[${m.daBuyDang}]]
+                    }, {
+                        name: '买中',
+                        y: [[${m.zhongBuyDang}]],
+                    }, {
+                        name: '买散',
+                        y: [[${m.sanBuyDang}]],
+                    }, {
+                        name: '卖机',
+                        y: [[${m.jiSellDang}]],
+                        sliced: true,
+                        selected: true
+                    },  {
+                        name: '卖大',
+                        y:  [[${m.daSellDang}]]
+                    },  {
+                        name: '卖中',
+                        y: [[${m.zhongSellDang}]],
+                    }, {
+                        name: '卖散',
+                        y: [[${m.sanSellDang}]],
+                    }
+                ]
+            }]
+        });
+    });
+    /*]]>*/
+</script>
+<!--<script src="/js/pie.js" ></script>-->
 </html>

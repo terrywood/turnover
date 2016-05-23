@@ -26,18 +26,17 @@ public class GetThread extends Thread {
             .setConnectionRequestTimeout(10000)
             .build();
     private CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(defaultRequestConfig).build();
-    private String  filePath;
+    private File  file;
     private String  ticker;
-    public GetThread(String file, String ticker) {
-        this.filePath= file;
+    public GetThread(File file, String ticker) {
+        this.file= file;
         this.ticker=ticker;
 
     }
 
     @Override
     public void run() {
-             File file = new File(filePath + ticker + ".json" );
-             if(!file.exists()){
+
                  try {
                      String link ="http://server.huanshoulv.com/aimapp/stock/fundflowPie/"+ticker;
                      log.info(link);
@@ -45,10 +44,12 @@ public class GetThread extends Thread {
                      CloseableHttpResponse response = httpClient.execute( httpget);
                      try {
                          HttpEntity entity = response.getEntity();
-                         String content = EntityUtils.toString(entity);
-                         if(content.indexOf("200")>0){
+                         FileUtils.copyInputStreamToFile(entity.getContent(),file);
+
+                        // String content = EntityUtils.toString(entity);
+                      /*   if(content.indexOf("200")>0){
                              FileUtils.writeStringToFile(file,content,"UTF-8",false);
-                         }
+                         }*/
                      } finally {
                          response.close();
                      }
@@ -59,10 +60,8 @@ public class GetThread extends Thread {
                      ex.printStackTrace();
                      // Handle I/O errors
                  }
-                 log.info("子线程" + Thread.currentThread() + "执行完毕");
-             }else{
-                 //log.info("file exists:" +str);
-             }
+                // log.info("子线程" + Thread.currentThread() + "执行完毕");
+
 
     }
 }

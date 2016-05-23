@@ -63,9 +63,9 @@ public class HuanShouLvService {
 
     @PostConstruct
     public void postConstruct() {
-       /* fetch();
-        save2DB();*/
-        //splitDate("");
+        fetch();
+        save2DB();
+        splitDate("");
     }
 
 
@@ -104,6 +104,7 @@ public class HuanShouLvService {
                  beanUtils.setProperty(entity,"daPrice",data[122]);
                  beanUtils.setProperty(entity,"zhongPrice",data[123]);
                  beanUtils.setProperty(entity,"shaPrice",data[124]);
+
                  this.fundFlowPieRepository.save(entity);
              } catch (IllegalAccessException e) {
                  e.printStackTrace();
@@ -128,7 +129,7 @@ public class HuanShouLvService {
                  }
              }
 
-
+             master.setMasterLv(Double.valueOf(data[134]));
              master.setId(entity.getId());
              master.setCode(entity.getCode());
              masterList.add(master);
@@ -178,6 +179,7 @@ public class HuanShouLvService {
                                  entity.setId(id);
                                  entity.setCode(code);
                                  list.add(entity);
+
                                //  fundFlowPieRepository.save(entity);
                              //}
                         }
@@ -198,9 +200,13 @@ public class HuanShouLvService {
             String file = filePath + DateUtils.formatDate(new java.util.Date(), "yyyyMMdd") + "/";
             Iterable<CSVRecord> records = CSVFormat.RFC4180.parse(in);
             for (CSVRecord record : records) {
-                String columnOne = record.get(0);
-                GetThread getThread = new GetThread(file, columnOne);
-                consumerService.execute(getThread);
+                String ticker = record.get(0);
+                File fileName = new File(file + ticker + ".json" );
+                if(!fileName.exists()){
+                    GetThread getThread = new GetThread(fileName, ticker);
+                    consumerService.execute(getThread);
+                }
+
             }
             consumerService.shutdown();
             while (!consumerService.awaitTermination(5, TimeUnit.SECONDS)) {

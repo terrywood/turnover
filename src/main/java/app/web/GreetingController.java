@@ -27,12 +27,13 @@ public class GreetingController {
 
         FundFlowPie obj = huanShouLvService.findOne(id);
 
-        System.out.println("test-------------------------------");
-        //System.out.println(obj.getFundFlowPieDetail());
+
 
         model.addAttribute("obj", obj);
         model.addAttribute("d", obj.getFundFlowPieDetail());
-        model.addAttribute("name", "Terry WU");
+        model.addAttribute("m", obj.getFundFlowPieMaster());
+        model.addAttribute("s", obj.getFundFlowPieSlave());
+
         return "detail";
     }
 

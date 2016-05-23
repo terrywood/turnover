@@ -66,5 +66,5 @@ public class FundFlowPieMaster {
     private Double daSellAvg;
     private Double jiSellAvg;
 
-
+    private Double masterLv;
 }

@@ -34,7 +34,9 @@ public class FundFlowPie implements java.io.Serializable {
     @JsonProperty(value = "close_px")
     Double close;
     @JsonProperty(value = "hslddx")
+    @Column(name = "ddx", unique = false, nullable = true)
     Double ddx;
+    @Column(name = "ddy", unique = false, nullable = true)
     @JsonProperty(value = "hslddy")
     Double ddy;
 
@@ -45,6 +47,8 @@ public class FundFlowPie implements java.io.Serializable {
     Double daPrice;
     Double zhongPrice;
     Double shaPrice;
+
+
 
     //@OneToOne(fetch = FetchType.LAZY, mappedBy = "fundFlowPie", cascade = CascadeType.ALL)
 
