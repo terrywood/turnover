@@ -46,8 +46,10 @@ public class FundFlowPie implements java.io.Serializable {
     Double jiPrice;
     Double daPrice;
     Double zhongPrice;
-    Double shaPrice;
+    Double sanPrice;
+    Double masterLv;
 
+    boolean isSplit;
 
 
     //@OneToOne(fetch = FetchType.LAZY, mappedBy = "fundFlowPie", cascade = CascadeType.ALL)
