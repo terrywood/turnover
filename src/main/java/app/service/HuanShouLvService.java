@@ -21,16 +21,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.PostConstruct;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
@@ -58,25 +56,35 @@ public class HuanShouLvService {
     FundFlowPieMasterRepository fundFlowPieMasterRepository;
     @Autowired
     ObjectMapper objectMapper;
-
+    @Autowired
+    JdbcTemplate jdbcTemplate;
     @PostConstruct
     public void postConstruct() {
         String today = DateFormatUtils.format(new Date(), "yyyMMdd");
 
-        //fetch(today);
+     //   fetch(today);
 
-/*        save2DB("20160518");
-        save2DB("20160519");
-        save2DB("20160520");
-        save2DB("20160523");*/
+
+        save2DB("20160523");
+        splitDate();
+
+
+
 
 /*        Date yesterday = DateUtils.addDays(new Date(), -1);
         yesterday = DateUtils.truncate(yesterday, Calendar.DATE);*/
 
 
-        splitDate();
-    }
 
+    }
+    public void jdbcTemplate(){
+        Map map = jdbcTemplate.queryForMap("SELECT count(*) from Fund_Flow_Pie");
+        System.out.println("----------------------------------------");
+        System.out.println("----------------------------------------");
+        System.out.println("----------------------------------------");
+        System.out.println(map);
+
+    }
 
     public FundFlowPie findOne(Long id) {
         return fundFlowPieRepository.findOne(id);

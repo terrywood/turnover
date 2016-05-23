@@ -4,12 +4,18 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.Map;
+
 @EnableTransactionManagement
 @EnableCaching
 @SpringBootApplication
@@ -20,6 +26,7 @@ public class Application {
 
     @Autowired
     ObjectMapper jacksonObjectMapper;
+
 
 
     public static void main(String[] args) throws Exception {
@@ -38,14 +45,15 @@ public class Application {
         return Executors.newScheduledThreadPool(6);
     }*/
 
-/*     @Bean
+     @Bean
     public CommandLineRunner demo() {
         return (args) -> {
-            jacksonObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
+          /*  jacksonObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
             ApiResult result =jacksonObjectMapper.readValue(new URL("http://server.huanshoulv.com/aimapp/stock/fundflowPie/000850"), ApiResult.class);
-            System.out.println(result);
+            System.out.println(result);*/
+
 
         };
-    }*/
+    }
 
 }
