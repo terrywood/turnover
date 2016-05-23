@@ -63,9 +63,12 @@ public class HuanShouLvService {
     public void postConstruct() {
         String today = DateFormatUtils.format(new Date(), "yyyMMdd");
 
-        fetch(today);
+        //fetch(today);
 
-        //save2DB(today);
+/*        save2DB("20160518");
+        save2DB("20160519");
+        save2DB("20160520");
+        save2DB("20160523");*/
 
 /*        Date yesterday = DateUtils.addDays(new Date(), -1);
         yesterday = DateUtils.truncate(yesterday, Calendar.DATE);*/
@@ -95,7 +98,8 @@ public class HuanShouLvService {
     public void splitDate() {
         String[] fields = AppUtils.fields;
 
-        Pageable page = new PageRequest(0, 10000, Sort.Direction.ASC, "id");
+        //Pageable page = new PageRequest(0, 20000, Sort.Direction.ASC, "id");
+
         //Page<FundFlowPie>  pageList  = fundFlowPieRepository.findAll(page);
         //Page<FundFlowPie> pageList = fundFlowPieRepository.findByDate(date, page);
 
@@ -106,7 +110,7 @@ public class HuanShouLvService {
         List<FundFlowPieSlave> slaveList = new ArrayList<>();
 */
 
-        List<FundFlowPie> entityList = fundFlowPieRepository.findByIsSplit(false,page);
+        List<FundFlowPie> entityList = fundFlowPieRepository.findByIsSplit(false);
         BeanUtilsBean beanUtils = BeanUtilsBean.getInstance();
         for (FundFlowPie entity :entityList) {
             String data[] = entity.getDetail().split(",");
@@ -182,33 +186,31 @@ public class HuanShouLvService {
 
         String file = filePath + day + "/";
         File dir = new File(file);
-        List<FundFlowPie> list = new ArrayList<>();
-        for (File json : dir.listFiles()) {
-            String code = FilenameUtils.getBaseName(json.getName());
-            try {
-                ApiResult result = objectMapper.readValue(new FileInputStream(json), ApiResult.class);
-                if (result.getStatus().equals("200")) {
-                    List<FundFlowPie> list2 = result.getData();
-                    for (FundFlowPie entity : list2) {
-                        String date = DateFormatUtils.format(entity.getDate(), "yyyyMMdd");
-                        Long id = Long.valueOf(date + code);
-                        //if(!fundFlowPieRepository.exists(id)){
-                        entity.setId(id);
-                        entity.setCode(code);
-                        entity.setSplit(false);
-                        list.add(entity);
-
-                        //  fundFlowPieRepository.save(entity);
-                        //}
+        if(dir.isDirectory()){
+            List<FundFlowPie> list = new ArrayList<>();
+            for (File json : dir.listFiles()) {
+                String code = FilenameUtils.getBaseName(json.getName());
+                try {
+                    ApiResult result = objectMapper.readValue(new FileInputStream(json), ApiResult.class);
+                    if (result.getStatus().equals("200")) {
+                        List<FundFlowPie> list2 = result.getData();
+                        for (FundFlowPie entity : list2) {
+                            String date = DateFormatUtils.format(entity.getDate(), "yyyyMMdd");
+                            Long id = Long.valueOf(date + code);
+                            entity.setId(id);
+                            entity.setCode(code);
+                            entity.setSplit(false);
+                            list.add(entity);
+                        }
                     }
+                } catch (IOException e) {
+                    log.info(json.getName());
+                    e.printStackTrace();
                 }
-            } catch (IOException e) {
-                log.info(json.getName());
-                e.printStackTrace();
             }
-        }
 
-        fundFlowPieRepository.save(list);
+            fundFlowPieRepository.save(list);
+        }
     }
 
     public void fetch(String day) {

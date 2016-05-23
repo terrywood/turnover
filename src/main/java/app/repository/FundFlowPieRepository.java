@@ -19,6 +19,6 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
 
     public Page<FundFlowPie> findByDate(java.util.Date date, Pageable page);
 
-    public List<FundFlowPie> findByIsSplit(boolean isSplit, Pageable page);
+    public List<FundFlowPie> findByIsSplit(boolean isSplit);
 
 }
