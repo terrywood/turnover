@@ -22,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -58,15 +59,20 @@ public class HuanShouLvService {
     ObjectMapper objectMapper;
     @Autowired
     JdbcTemplate jdbcTemplate;
+
+
+    @Scheduled(cron = "0 0/15 9-20 * * MON-FRI")
+    public void fetchData() {
+        String today = DateFormatUtils.format(new Date(), "yyyMMdd");
+        fetch(today);
+    }
+
     @PostConstruct
     public void postConstruct() {
         String today = DateFormatUtils.format(new Date(), "yyyMMdd");
-
-     //   fetch(today);
-
-
-        save2DB("20160523");
-        splitDate();
+        fetch(today);
+  /*      save2DB(today);
+        splitDate();*/
 
 
 

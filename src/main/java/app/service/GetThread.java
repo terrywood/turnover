@@ -39,7 +39,7 @@ public class GetThread extends Thread {
 
                  try {
                      String link ="http://server.huanshoulv.com/aimapp/stock/fundflowPie/"+ticker;
-                     log.info(link);
+                     //log.info(link);
                      HttpGet httpget = new HttpGet(link);
                      CloseableHttpResponse response = httpClient.execute( httpget);
                      try {
@@ -54,10 +54,12 @@ public class GetThread extends Thread {
                          response.close();
                      }
                  } catch (ClientProtocolException ex) {
-                     ex.printStackTrace();
+                     log.info("ClientProtocolException by " + ticker);
+                     //ex.printStackTrace();
                      // Handle protocol errors
                  } catch (IOException ex) {
-                     ex.printStackTrace();
+                     log.info("IOException by " + ticker + ex.getMessage());
+                    // ex.printStackTrace();
                      // Handle I/O errors
                  }
                 // log.info("子线程" + Thread.currentThread() + "执行完毕");
