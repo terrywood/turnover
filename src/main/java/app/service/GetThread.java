@@ -36,7 +36,6 @@ public class GetThread extends Thread {
 
     @Override
     public void run() {
-
                  try {
                      String link ="http://server.huanshoulv.com/aimapp/stock/fundflowPie/"+ticker;
                      //log.info(link);
@@ -45,7 +44,6 @@ public class GetThread extends Thread {
                      try {
                          HttpEntity entity = response.getEntity();
                          FileUtils.copyInputStreamToFile(entity.getContent(),file);
-
                         // String content = EntityUtils.toString(entity);
                       /*   if(content.indexOf("200")>0){
                              FileUtils.writeStringToFile(file,content,"UTF-8",false);
@@ -58,13 +56,11 @@ public class GetThread extends Thread {
                      //ex.printStackTrace();
                      // Handle protocol errors
                  } catch (IOException ex) {
-                     log.info("IOException by " + ticker + ex.getMessage());
+                     log.info(ticker+ " "+ ex.getMessage());
                     // ex.printStackTrace();
                      // Handle I/O errors
                  }
                 // log.info("子线程" + Thread.currentThread() + "执行完毕");
-
-
     }
 }
 
