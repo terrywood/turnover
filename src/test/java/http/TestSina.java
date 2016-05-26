@@ -19,6 +19,7 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import  java.util.Date;
+import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,13 +40,20 @@ public class TestSina {
     }
 
     public static void main(String[] args) throws IOException {
-        TestSina sina = new TestSina();
-        ExecutorService service =  Executors.newFixedThreadPool(25);
 
         String  syncFolder = "D:\\Terry\\cloud\\OneDrive\\history\\day\\raw_data\\";
         String  useFolder = "D:\\Terry\\cloud\\OneDrive\\history\\day\\";
 
-        File folder = new File(syncFolder);
+
+        TestSina sina = new TestSina();
+        Properties prop = new Properties();
+        FileInputStream fis =   new FileInputStream("src/main/resources/application.properties");
+        prop.load(fis);
+        //prop.list(System.out);
+        String path =  prop.getProperty("save.sina.data.path");
+        ExecutorService service =  Executors.newFixedThreadPool(25);
+
+        File folder = new File(path);
         File[] files = folder.listFiles();
         for(File file:files){
             String baseName = (FilenameUtils.getBaseName(file.getName()));
@@ -54,8 +62,9 @@ public class TestSina {
                  * GetSinaRawDailyThread and  GetSinaDailyThread 不能同时使用。应该先行完 get sina
                  * data , 再行生写非复权数据
                  * */
-                //service.execute(new GetSinaRawDailyThread(baseName,syncFolder));
-                service.execute(new GetSinaDailyThread(baseName,useFolder));
+                service.execute(new GetSinaRawDailyThread(baseName,path));
+
+                //service.execute(new GetSinaDailyThread(baseName,useFolder));
             }
         }
         service.shutdown();

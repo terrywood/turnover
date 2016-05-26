@@ -45,7 +45,7 @@ public class GetSinaRawDailyThread implements Runnable {
             ObjectMapper mapper = new ObjectMapper();
             SinaHistorySummary summary = mapper.readValue(new FileInputStream(stockSummary), SinaHistorySummary.class);
             Date lastDay = summary.getDate();
-            System.out.println("lastDay->"+lastDay);
+           // System.out.println("lastDay->"+lastDay);
             if(DateUtils.truncatedEquals(new Date(),lastDay, Calendar.DATE)){
                 System.out.println("It is last update version");
                 return;

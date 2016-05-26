@@ -228,7 +228,7 @@ public class HuanShouLvService {
     }
 
     public void fetch(String day) {
-        ExecutorService consumerService = Executors.newFixedThreadPool(5);
+        ExecutorService consumerService = Executors.newFixedThreadPool(10);
         try {
             Reader in = new FileReader(stockFile);
             String file = filePath + day + "/";
