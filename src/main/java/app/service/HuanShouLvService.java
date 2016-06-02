@@ -79,16 +79,12 @@ public class HuanShouLvService {
 
     @PostConstruct
     public void postConstruct() {
-        // String today = DateFormatUtils.format(new Date(), "yyyyMMdd");
-        //fetch(today);
-        // save2DB(today);
-        /*
-        splitDate();*/
-/*        Date yesterday = DateUtils.addDays(new Date(), -1);
-        yesterday = DateUtils.truncate(yesterday, Calendar.DATE);*/
-        long cur = System.currentTimeMillis();
-        // resetDb();
-        // splitDate();
+   /*      String today = DateFormatUtils.format(new Date(), "yyyyMMdd");
+         fetch(today);
+         save2DB(today);
+         splitDate();*/
+
+
     }
 
     public void resetDb() {
@@ -100,6 +96,7 @@ public class HuanShouLvService {
         }
 
     }
+
 
     public void jdbcTemplate() {
         Map map = jdbcTemplate.queryForMap("SELECT count(*) from Fund_Flow_Pie");
@@ -133,23 +130,16 @@ public class HuanShouLvService {
         BeanUtilsBean beanUtils = BeanUtilsBean.getInstance();
         for (FundFlowPie entity : entityList) {
             String data[] = entity.getDetail().split(",");
-
             entity.setJiPrice(Double.valueOf(data[121]));
             entity.setDaPrice(Double.valueOf(data[122]));
             entity.setZhongPrice(Double.valueOf(data[123]));
             entity.setSanPrice(Double.valueOf(data[124]));
-
             entity.setMasterLv(Double.valueOf(data[134]));
-
             entity.setSplit(true);
-
             // System.out.println(entity);
-
             FundFlowPieDetail obj = new FundFlowPieDetail();
             FundFlowPieMaster master = new FundFlowPieMaster();
             FundFlowPieSlave slave = new FundFlowPieSlave();
-
-
             for (int i = 1; i <= 40; i++) {
                 try {
                     beanUtils.setProperty(obj, fields[i], data[i]);
@@ -161,25 +151,18 @@ public class HuanShouLvService {
                     e.printStackTrace();
                 }
             }
-
-
             master.setId(entity.getId());
             master.setCode(entity.getCode());
             entity.setFundFlowPieMaster(master);
-
             //  masterList.add(master);
-
             obj.setCode(entity.getCode());
             obj.setId(entity.getId());
             // detailList.add(obj);
             entity.setFundFlowPieDetail(obj);
-
             slave.setCode(entity.getCode());
             slave.setId(entity.getId());
-
             entity.setFundFlowPieSlave(slave);
             //   slaveList.add(slave);
-
         }
         fundFlowPieRepository.save(entityList);
 /*        fundFlowPieDetailRepository.save(detailList);
@@ -220,8 +203,6 @@ public class HuanShouLvService {
                                     fundFlowPieRepository.updateContent(entity.getDdx(), entity.getDdy(), entity.getId());
                                 }
                                 //fundFlowPieRepository.save(obj);
-
-
                             }
 
                         /*    if(entity.getDdx()!=null && entity.getDdx()>0d){
@@ -271,9 +252,9 @@ public class HuanShouLvService {
     }
     private static String DOMAIN = "http://server.huanshoulv.com/";
     public void fetchPieRaw() {
-        String folder = rawPath + DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
+        String folder = rawPath + "pie/" +DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
         Iterable<CSVRecord> records = this.tongUnionService.getEqu();
-        int i = 0;
+        int i = 1;
         CloseableHttpClient httpClient = HttpClients.createDefault();
         for (CSVRecord record : records) {
             i++;
@@ -294,15 +275,56 @@ public class HuanShouLvService {
                 }
 
             } catch (Exception e) {
-
             }
         }
         File dir = new File(folder);
         if (dir.listFiles().length == i) {
-            log.info("fetchPieRaw done");
+            log.info("----------------fetchPieRaw done");
         } else {
-            log.info("oops fetchPieRaw not done");
+            log.info("----------------oops fetchPieRaw not done");
         }
+    }
+
+    //涨停强度
+    public void fetchSurgeRaw() {
+        String folder = rawPath + "surge/" +DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        for (int i=1;i<4;i++) {
+            File file = new File(folder + i + ".json");
+            if (file.exists()) {
+                continue;
+            }
+            try {
+                HttpGet httpget = new HttpGet(DOMAIN + "aimapp/stock/surgeLimit?sort_type=-1&sort_field_name=px_change_rate&page_count=20&page=" + i );
+                httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
+                CloseableHttpResponse response = httpClient.execute(httpget);
+                HttpEntity entity = response.getEntity();
+                String content = EntityUtils.toString(entity);
+                if (content.indexOf("200") > 0) {
+                    FileUtils.writeStringToFile(file, content, "UTF-8", false);
+                }
+            } catch (Exception e) {
+            }
+        }
+
+    }
+    //暴涨强度
+    public void fetchBoomRaw() {
+        String folder = rawPath + "boom/" +DateFormatUtils.format(new Date(), "yyyyMMdd") + ".json";
+            CloseableHttpClient httpClient = HttpClients.createDefault();
+            File file = new File(folder);
+            try {
+                HttpGet httpget = new HttpGet(DOMAIN + "aimapp/stock/boomStock?page=1&page_count=20&sort_type=0&sort_field_name=addup_day_count"  );
+                httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
+                CloseableHttpResponse response = httpClient.execute(httpget);
+                HttpEntity entity = response.getEntity();
+                String content = EntityUtils.toString(entity);
+                if (content.indexOf("200") > 0) {
+                    FileUtils.writeStringToFile(file, content, "UTF-8", false);
+                }
+            } catch (Exception e) {
+
+            }
 
 
     }

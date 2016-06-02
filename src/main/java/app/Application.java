@@ -51,20 +51,16 @@ public class Application {
 
     }
 
-/*    @Bean(destroyMethod = "shutdown")
-    public Executor taskScheduler() {
-        return Executors.newScheduledThreadPool(6);
-    }*/
+
 
      @Bean
     public CommandLineRunner demo() {
         return (args) -> {
-          /*  jacksonObjectMapper.configure(JsonParser.Feature.ALLOW_UNQUOTED_CONTROL_CHARS, true);
-            ApiResult result =jacksonObjectMapper.readValue(new URL("http://server.huanshoulv.com/aimapp/stock/fundflowPie/000850"), ApiResult.class);
-            System.out.println(result);*/
 
-            tongUnionService.getData("equity/getEqu.csv?field=ticker,secShortName,listDate,totalShares,nonrestFloatShares&equTypeCD=A", new File(stockFile));
-            this.huanShouLvService.fetchPieRaw();
+        /*    huanShouLvService.fetchPieRaw();
+            huanShouLvService.fetchBoomRaw();
+            huanShouLvService.fetchSurgeRaw();*/
+
         };
     }
 

@@ -33,6 +33,9 @@ public class TongUnionService {
     @Value("${fetch.huanshoulv.stocks}")
     public String stockFile;
 
+
+
+
     //股票基本信息
     public Iterable<CSVRecord> getEqu(){
         Reader in = null;
@@ -42,10 +45,9 @@ public class TongUnionService {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return null;
     }
-//getData("equity/getEqu.csv?field=ticker,secShortName,listDate,totalShares,nonrestFloatShares&equTypeCD=A", new File(stockFile));
+    //getData("equity/getEqu.csv?field=ticker,secShortName,listDate,totalShares,nonrestFloatShares&equTypeCD=A", new File(stockFile));
     public HttpEntity getData(String api,File file){
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
@@ -54,10 +56,8 @@ public class TongUnionService {
             httpget.setHeader("Authorization","Bearer "+TOKEN);
             CloseableHttpResponse response = httpClient.execute( httpget);
             try {
-
                 FileUtils.copyInputStreamToFile(response.getEntity().getContent(),file);
                //return  response.getEntity();
-
             } finally {
                 response.close();
             }

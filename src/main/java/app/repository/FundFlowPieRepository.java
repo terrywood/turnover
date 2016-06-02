@@ -18,7 +18,7 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
 
     @Modifying
     @Transactional
-    @Query("update FundFlowPie t set t.ddx = ?0 , t.ddy = ?1 where t.id = ?2")
+    @Query("update FundFlowPie t set t.ddx = ? , t.ddy = ? where t.id = ?")
     public void updateContent(Double ddx,Double ddy, Long id);
 
     public Page<FundFlowPie> findByDate(java.util.Date date, Pageable page);
