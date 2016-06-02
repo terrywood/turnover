@@ -40,14 +40,15 @@ public class GetThread extends Thread {
                      String link ="http://server.huanshoulv.com/aimapp/stock/fundflowPie/"+ticker;
                      //log.info(link);
                      HttpGet httpget = new HttpGet(link);
+                     httpget.setHeader("user-agent","IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
                      CloseableHttpResponse response = httpClient.execute( httpget);
                      try {
                          HttpEntity entity = response.getEntity();
-                         FileUtils.copyInputStreamToFile(entity.getContent(),file);
-                        // String content = EntityUtils.toString(entity);
-                      /*   if(content.indexOf("200")>0){
+                         //FileUtils.copyInputStreamToFile(entity.getContent(),file);
+                         String content = EntityUtils.toString(entity);
+                         if(content.indexOf("200")>0){
                              FileUtils.writeStringToFile(file,content,"UTF-8",false);
-                         }*/
+                         }
                      } finally {
                          response.close();
                      }

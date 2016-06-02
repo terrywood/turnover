@@ -28,14 +28,17 @@ public class FundFlowPie implements java.io.Serializable {
 
     @Lob
     @Basic(fetch = FetchType.LAZY)
-    @Column(name=" content", columnDefinition="mediumtext", nullable=true)
+    @Column(name="content", columnDefinition="mediumtext", nullable=true)
     String detail;
 
     @JsonProperty(value = "close_px")
     Double close;
-    @JsonProperty(value = "hslddx")
+
+
     @Column(name = "ddx", unique = false, nullable = true)
+    @JsonProperty(value = "hslddx")
     Double ddx;
+
     @Column(name = "ddy", unique = false, nullable = true)
     @JsonProperty(value = "hslddy")
     Double ddy;

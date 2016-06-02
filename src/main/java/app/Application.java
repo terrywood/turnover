@@ -1,9 +1,12 @@
 package app;
 
+import app.service.HuanShouLvService;
+import app.service.TongUnionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -14,6 +17,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.io.File;
 import java.util.Map;
 
 @EnableTransactionManagement
@@ -27,7 +31,12 @@ public class Application {
     @Autowired
     ObjectMapper jacksonObjectMapper;
 
-
+    @Autowired
+    HuanShouLvService huanShouLvService;
+    @Autowired
+    TongUnionService tongUnionService;
+    @Value("${fetch.huanshoulv.stocks}")
+    public String stockFile;
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class);
@@ -38,6 +47,8 @@ public class Application {
         for (String beanName : beanNames) {
             System.out.println(beanName);
         }*/
+
+
     }
 
 /*    @Bean(destroyMethod = "shutdown")
@@ -52,7 +63,8 @@ public class Application {
             ApiResult result =jacksonObjectMapper.readValue(new URL("http://server.huanshoulv.com/aimapp/stock/fundflowPie/000850"), ApiResult.class);
             System.out.println(result);*/
 
-
+            tongUnionService.getData("equity/getEqu.csv?field=ticker,secShortName,listDate,totalShares,nonrestFloatShares&equTypeCD=A", new File(stockFile));
+            this.huanShouLvService.fetchPieRaw();
         };
     }
 

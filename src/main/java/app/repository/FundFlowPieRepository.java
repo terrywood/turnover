@@ -5,7 +5,10 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 
+import javax.transaction.Transactional;
 import java.util.List;
 
 /**
@@ -13,9 +16,10 @@ import java.util.List;
  */
 public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>, JpaSpecificationExecutor {
 
-   /* @Modifying
-    @Query("update DailyEntity t set t.content = ? ,t.lastUpdateTime = now() where t.id = ? ")
-    public void updateContent(String content, String id);*/
+    @Modifying
+    @Transactional
+    @Query("update FundFlowPie t set t.ddx = ?0 , t.ddy = ?1 where t.id = ?2")
+    public void updateContent(Double ddx,Double ddy, Long id);
 
     public Page<FundFlowPie> findByDate(java.util.Date date, Pageable page);
 
