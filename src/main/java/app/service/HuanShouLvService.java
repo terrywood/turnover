@@ -295,12 +295,7 @@ public class HuanShouLvService {
             } catch (Exception e) {
             }
         }
-        File dir = new File(folder);
-        if (dir.listFiles().length == i) {
-            log.info("----------------fetchPieRaw done");
-        } else {
-            log.info("----------------oops fetchPieRaw not done");
-        }
+        log.info("----------------fetchPieRaw done");
     }
 
     //涨停强度

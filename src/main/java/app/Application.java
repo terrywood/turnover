@@ -67,11 +67,9 @@ public class Application extends SpringBootServletInitializer {
     public CommandLineRunner demo() {
         return (args) -> {
            // huanShouLvService.pressEat();
-
-        /*    huanShouLvService.fetchPieRaw();
-            huanShouLvService.fetchBoomRaw();
-            huanShouLvService.fetchSurgeRaw();*/
-
+            huanShouLvService.fetchPieRaw();
+           // huanShouLvService.fetchBoomRaw();
+           // huanShouLvService.fetchSurgeRaw();
         };
     }
 
