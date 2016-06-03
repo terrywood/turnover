@@ -13,7 +13,6 @@ import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
 import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.CloseableHttpClient;
@@ -23,6 +22,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -86,6 +89,24 @@ public class HuanShouLvService {
 
 
     }
+    /**
+     * 当一只股票符合，买单均手>卖单均手，大户买入占比>大户卖出占比，机构买入占比>机构卖出占比；
+     * select d from FundFlowPieDetail d where d.totalBuyShou> d.totalSellShou and  d.daBuyGu>daSellGu and d.jiBuyGu>d.jiSellGu
+     *
+     * 再观察被动买单均手>=被动卖单均手，同时被动买单均手>=主动买单均手，说明主力看好后市，压盘吃货。
+     * select s  from FundFlowPieSlave s , FundFlowPieMaster m where s.totalBuyShou>=s.totalSellShou and s.totalBuyShou>= m.totalBuyShou
+     * */
+    public Page<FundFlowPie> findPressEat(int page, int size){
+        Pageable pageable =  new PageRequest( page, size, new Sort(Sort.Direction.ASC,"id"));
+        Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(pageable);
+        return  list;
+    }
+
+    public List<FundFlowPie> findByCodeAndIdGreaterThan(String code, Long id, int size){
+        Pageable pageable =  new PageRequest( 0, size, new Sort(Sort.Direction.ASC,"id"));
+        return fundFlowPieRepository.findByCodeAndIdGreaterThan(code,id,pageable);
+
+    }
 
     public void resetDb() {
         File dir = new File(filePath);
@@ -120,9 +141,6 @@ public class HuanShouLvService {
      * 说明主力看好后市，
      * 压盘吃货。
      */
-    public void press() {
-
-    }
 
     public void splitDate() {
         String[] fields = AppUtils.fields;
@@ -325,8 +343,6 @@ public class HuanShouLvService {
             } catch (Exception e) {
 
             }
-
-
     }
 
 

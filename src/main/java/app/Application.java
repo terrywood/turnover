@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -25,7 +27,7 @@ import java.util.Map;
 @SpringBootApplication
 @EnableScheduling
 @Configuration
-public class Application {
+public class Application extends SpringBootServletInitializer {
     private static final Logger log = LoggerFactory.getLogger(Application.class);
 
     @Autowired
@@ -37,6 +39,14 @@ public class Application {
     TongUnionService tongUnionService;
     @Value("${fetch.huanshoulv.stocks}")
     public String stockFile;
+
+
+
+    @Override
+    protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
+        return builder.sources(Application.class);
+       // return super.configure(builder);
+    }
 
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class);
@@ -56,6 +66,7 @@ public class Application {
      @Bean
     public CommandLineRunner demo() {
         return (args) -> {
+           // huanShouLvService.pressEat();
 
         /*    huanShouLvService.fetchPieRaw();
             huanShouLvService.fetchBoomRaw();

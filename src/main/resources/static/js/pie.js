@@ -50,7 +50,7 @@ $(function () {
                 y: 0.91
             }, {
                 name: 'Proprietary',
-                y: 0.2
+                y: 12.2
             }]
         }]
     });

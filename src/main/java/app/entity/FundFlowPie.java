@@ -7,6 +7,7 @@ import lombok.Data;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.List;
 
 /**
  * Created by terry.wu on 2016/5/17 0017.
@@ -22,6 +23,9 @@ public class FundFlowPie implements java.io.Serializable {
 
     @JsonFormat(pattern = "yyyyMMdd", timezone="GMT+8")
     Date date;
+
+    @Transient
+    public List<FundFlowPie> greater;
 
     public FundFlowPie() {
     }
