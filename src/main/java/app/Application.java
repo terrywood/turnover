@@ -15,12 +15,8 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-
-import java.io.File;
-import java.util.Map;
 
 @EnableTransactionManagement
 @EnableCaching
@@ -63,13 +59,17 @@ public class Application extends SpringBootServletInitializer {
 
 
 
-     @Bean
+    @Bean
     public CommandLineRunner demo() {
         return (args) -> {
-           // huanShouLvService.pressEat();
-            huanShouLvService.fetchPieRaw();
-           // huanShouLvService.fetchBoomRaw();
-           // huanShouLvService.fetchSurgeRaw();
+            //huanShouLvService.fetchPieRaw();
+            //huanShouLvService.fetchBoomRaw();
+            //huanShouLvService.fetchSurgeRaw();
+            huanShouLvService.save2DB("20160602");
+      /*      huanShouLvService.save2DB("20160603");
+            huanShouLvService.save2DB("20160606");
+            huanShouLvService.save2DB("20160607");
+            huanShouLvService.save2DB("20160608");*/
         };
     }
 

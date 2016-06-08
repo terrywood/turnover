@@ -18,12 +18,11 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
 
     @Modifying
     @Transactional
-    @Query("update FundFlowPie t set t.ddx = ? , t.ddy = ? where t.id = ?")
+    @Query("update FundFlowPie t set t.ddx = ?1 , t.ddy = ?2 where t.id = ?3")
     public void updateContent(Double ddx,Double ddy, Long id);
 
     public Page<FundFlowPie> findByDate(java.util.Date date, Pageable page);
 
-    public List<FundFlowPie> findByIsSplit(boolean isSplit);
 
     /**
      * 当一只股票符合，买单均手>卖单均手，大户买入占比>大户卖出占比，机构买入占比>机构卖出占比；

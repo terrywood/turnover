@@ -1,6 +1,11 @@
 package app.service;
 
-import app.entity.*;
+import app.bean.ApiResult;
+import app.bean.PieData;
+import app.entity.FundFlowPie;
+import app.entity.FundFlowPieDetail;
+import app.entity.FundFlowPieMaster;
+import app.entity.FundFlowPieSlave;
 import app.repository.FundFlowPieDetailRepository;
 import app.repository.FundFlowPieMasterRepository;
 import app.repository.FundFlowPieRepository;
@@ -35,13 +40,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by terry.wu on 2016/5/18 0018.
@@ -50,13 +54,13 @@ import java.util.concurrent.TimeUnit;
 @Service
 public class HuanShouLvService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-    //BlockingQueue<String> consumerQueue = new LinkedBlockingQueue();
 
-    @Value("${save.huanshoulv.data.path}")
-    public String filePath;
+/*    @Value("${save.huanshoulv.data.path}")
+    public String filePath;*/
+
     @Value("${save.huanshoulv.raw.path}")
     public String rawPath;
-
+    private static String DOMAIN = "http://server.huanshoulv.com/";
     @Value("${fetch.huanshoulv.stocks}")
     public String stockFile;
     @Autowired
@@ -85,30 +89,31 @@ public class HuanShouLvService {
    /*      String today = DateFormatUtils.format(new Date(), "yyyyMMdd");
          fetch(today);
          save2DB(today);
-         splitDate();*/
+       */
 
 
     }
+
     /**
      * 当一只股票符合，买单均手>卖单均手，大户买入占比>大户卖出占比，机构买入占比>机构卖出占比；
      * select d from FundFlowPieDetail d where d.totalBuyShou> d.totalSellShou and  d.daBuyGu>daSellGu and d.jiBuyGu>d.jiSellGu
-     *
+     * <p>
      * 再观察被动买单均手>=被动卖单均手，同时被动买单均手>=主动买单均手，说明主力看好后市，压盘吃货。
      * select s  from FundFlowPieSlave s , FundFlowPieMaster m where s.totalBuyShou>=s.totalSellShou and s.totalBuyShou>= m.totalBuyShou
-     * */
-    public Page<FundFlowPie> findPressEat(int page, int size){
-        Pageable pageable =  new PageRequest( page, size, new Sort(Sort.Direction.ASC,"id"));
+     */
+    public Page<FundFlowPie> findPressEat(int page, int size) {
+        Pageable pageable = new PageRequest(page, size, new Sort(Sort.Direction.ASC, "id"));
         Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(pageable);
-        return  list;
+        return list;
     }
 
-    public List<FundFlowPie> findByCodeAndIdGreaterThan(String code, Long id, int size){
-        Pageable pageable =  new PageRequest( 0, size, new Sort(Sort.Direction.ASC,"id"));
-        return fundFlowPieRepository.findByCodeAndIdGreaterThan(code,id,pageable);
+    public List<FundFlowPie> findByCodeAndIdGreaterThan(String code, Long id, int size) {
+        Pageable pageable = new PageRequest(0, size, new Sort(Sort.Direction.ASC, "id"));
+        return fundFlowPieRepository.findByCodeAndIdGreaterThan(code, id, pageable);
 
     }
 
-    public void resetDb() {
+/*    public void resetDb() {
         File dir = new File(filePath);
         File files[] = dir.listFiles();
         for (File day : files) {
@@ -116,7 +121,7 @@ public class HuanShouLvService {
             save2DB(name);
         }
 
-    }
+    }*/
 
 
     public void jdbcTemplate() {
@@ -141,19 +146,19 @@ public class HuanShouLvService {
      * 说明主力看好后市，
      * 压盘吃货。
      */
-
+/*
     public void splitDate() {
         String[] fields = AppUtils.fields;
         List<FundFlowPie> entityList = fundFlowPieRepository.findByIsSplit(false);
         BeanUtilsBean beanUtils = BeanUtilsBean.getInstance();
         for (FundFlowPie entity : entityList) {
-            String data[] = entity.getDetail().split(",");
+            String data[] = entity.getCode().split(",");
             entity.setJiPrice(Double.valueOf(data[121]));
             entity.setDaPrice(Double.valueOf(data[122]));
             entity.setZhongPrice(Double.valueOf(data[123]));
             entity.setSanPrice(Double.valueOf(data[124]));
             entity.setMasterLv(Double.valueOf(data[134]));
-            entity.setSplit(true);
+
             // System.out.println(entity);
             FundFlowPieDetail obj = new FundFlowPieDetail();
             FundFlowPieMaster master = new FundFlowPieMaster();
@@ -183,17 +188,19 @@ public class HuanShouLvService {
             //   slaveList.add(slave);
         }
         fundFlowPieRepository.save(entityList);
-/*        fundFlowPieDetailRepository.save(detailList);
+*//*        fundFlowPieDetailRepository.save(detailList);
         fundFlowPieMasterRepository.save(masterList);
-        fundFlowPieSlaveRepository.save(slaveList);*/
+        fundFlowPieSlaveRepository.save(slaveList);*//*
 
-    }
+    }*/
 
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
     @Transactional
-    public void save2DB(String day) {
-
-        String file = filePath + day + "/";
+    public void save2DB(String day) throws ParseException {
+        String[] fields = AppUtils.fields;
+        Date date = sdf.parse(day);
+        String file = rawPath + day + "/";
         File dir = new File(file);
         if (dir.isDirectory()) {
             List<FundFlowPie> list = new ArrayList<>();
@@ -202,33 +209,52 @@ public class HuanShouLvService {
                 try {
                     ApiResult result = objectMapper.readValue(new FileInputStream(json), ApiResult.class);
                     if (result.getStatus().equals("200")) {
-                        List<FundFlowPie> list2 = result.getData();
-                        for (FundFlowPie entity : list2) {
-                            String date = DateFormatUtils.format(entity.getDate(), "yyyyMMdd");
-                            Long id = Long.valueOf(date + code);
+                        PieData pieData = result.getData();
+                        String pie = pieData.getPie();
+                        if (pie.length() > 8) {
+                            FundFlowPie entity = new FundFlowPie();
+                            Long id = Long.valueOf(day + code);
                             entity.setId(id);
                             entity.setCode(code);
-                            entity.setSplit(false);
-                            FundFlowPie obj = fundFlowPieRepository.findOne(id);
-                            if (obj == null) {
-                                fundFlowPieRepository.save(entity);
-                            } else {
-                                /*if (entity.getDdx()!=null){
-                                    obj.setDdx(entity.getDdx());
-                                }*/
-                                if (entity.getDdy() != null) {
-                                    // obj.setDdy(entity.getDdy());
-                                    fundFlowPieRepository.updateContent(entity.getDdx(), entity.getDdy(), entity.getId());
+                            entity.setDdy(pieData.getHslddy());
+                            entity.setDdx(pieData.getHslddx());
+                            entity.setDate(date);
+
+
+                            BeanUtilsBean beanUtils = BeanUtilsBean.getInstance();
+
+                            String data[] = pie.split(",");
+                            entity.setJiPrice(Double.valueOf(data[121]));
+                            entity.setDaPrice(Double.valueOf(data[122]));
+                            entity.setZhongPrice(Double.valueOf(data[123]));
+                            entity.setSanPrice(Double.valueOf(data[124]));
+                            entity.setMasterLv(Double.valueOf(data[134]));
+
+                            // System.out.println(entity);
+                            FundFlowPieDetail detail = new FundFlowPieDetail();
+                            FundFlowPieMaster master = new FundFlowPieMaster();
+                            FundFlowPieSlave slave = new FundFlowPieSlave();
+                            for (int i = 1; i <= 40; i++) {
+                                try {
+                                    beanUtils.setProperty(detail, fields[i], data[i]);
+                                    beanUtils.setProperty(master, fields[i], data[i + 40]);
+                                    beanUtils.setProperty(slave, fields[i], data[i + 80]);
+                                } catch (IllegalAccessException e) {
+                                    e.printStackTrace();
+                                } catch (InvocationTargetException e) {
+                                    e.printStackTrace();
                                 }
-                                //fundFlowPieRepository.save(obj);
                             }
-
-                        /*    if(entity.getDdx()!=null && entity.getDdx()>0d){
-                                System.out.println(entity.getId() +" " + entity.getDdx() +" " + entity.getDdy());
-                            }*/
-
-                            // list.add(entity);
+                            master.setId(entity.getId());
+                            entity.setFundFlowPieMaster(master);
+                            detail.setId(entity.getId());
+                            entity.setFundFlowPieDetail(detail);
+                            slave.setId(entity.getId());
+                            entity.setFundFlowPieSlave(slave);
+                            list.add(entity);
                         }
+
+
                     }
                 } catch (IOException e) {
                     log.info(json.getAbsolutePath());
@@ -237,13 +263,12 @@ public class HuanShouLvService {
                 }
             }
 
-            // fundFlowPieRepository.save(list);
+            fundFlowPieRepository.save(list);
         }
     }
 
-    public void fetch(String day) {
+   /* public void fetch(String day) {
         ExecutorService consumerService = Executors.newFixedThreadPool(1);
-
         try {
             String file = filePath + day + "/";
             Iterable<CSVRecord> records = this.tongUnionService.getEqu();
@@ -255,22 +280,18 @@ public class HuanShouLvService {
                     GetThread getThread = new GetThread(fileName, ticker);
                     consumerService.execute(getThread);
                 }
-
             }
             consumerService.shutdown();
             while (!consumerService.awaitTermination(5, TimeUnit.SECONDS)) {
                 log.info("线程池没有关闭");
             }
             log.info("线程池已经关闭");
-
-
         } catch (InterruptedException e) {
-
         }
-    }
-    private static String DOMAIN = "http://server.huanshoulv.com/";
+    }*/
+
     public void fetchPieRaw() {
-        String folder = rawPath + "pie/" +DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
+        String folder = rawPath + "pie/" + DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
         Iterable<CSVRecord> records = this.tongUnionService.getEqu();
         int i = 1;
         CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -291,8 +312,8 @@ public class HuanShouLvService {
                 if (content.indexOf("200") > 0) {
                     FileUtils.writeStringToFile(file, content, "UTF-8", false);
                 }
-
             } catch (Exception e) {
+
             }
         }
         log.info("----------------fetchPieRaw done");
@@ -300,15 +321,15 @@ public class HuanShouLvService {
 
     //涨停强度
     public void fetchSurgeRaw() {
-        String folder = rawPath + "surge/" +DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
+        String folder = rawPath + "surge/" + DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        for (int i=1;i<4;i++) {
+        for (int i = 1; i < 4; i++) {
             File file = new File(folder + i + ".json");
             if (file.exists()) {
                 continue;
             }
             try {
-                HttpGet httpget = new HttpGet(DOMAIN + "aimapp/stock/surgeLimit?sort_type=-1&sort_field_name=px_change_rate&page_count=20&page=" + i );
+                HttpGet httpget = new HttpGet(DOMAIN + "aimapp/stock/surgeLimit?sort_type=-1&sort_field_name=px_change_rate&page_count=20&page=" + i);
                 httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
                 CloseableHttpResponse response = httpClient.execute(httpget);
                 HttpEntity entity = response.getEntity();
@@ -321,28 +342,25 @@ public class HuanShouLvService {
         }
 
     }
+
     //暴涨强度
     public void fetchBoomRaw() {
-        String folder = rawPath + "boom/" +DateFormatUtils.format(new Date(), "yyyyMMdd") + ".json";
-            CloseableHttpClient httpClient = HttpClients.createDefault();
-            File file = new File(folder);
-            try {
-                HttpGet httpget = new HttpGet(DOMAIN + "aimapp/stock/boomStock?page=1&page_count=20&sort_type=0&sort_field_name=addup_day_count"  );
-                httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
-                CloseableHttpResponse response = httpClient.execute(httpget);
-                HttpEntity entity = response.getEntity();
-                String content = EntityUtils.toString(entity);
-                if (content.indexOf("200") > 0) {
-                    FileUtils.writeStringToFile(file, content, "UTF-8", false);
-                }
-            } catch (Exception e) {
-
+        String folder = rawPath + "boom/" + DateFormatUtils.format(new Date(), "yyyyMMdd") + ".json";
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        File file = new File(folder);
+        try {
+            HttpGet httpget = new HttpGet(DOMAIN + "aimapp/stock/boomStock?page=1&page_count=20&sort_type=0&sort_field_name=addup_day_count");
+            httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
+            CloseableHttpResponse response = httpClient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            String content = EntityUtils.toString(entity);
+            if (content.indexOf("200") > 0) {
+                FileUtils.writeStringToFile(file, content, "UTF-8", false);
             }
+        } catch (Exception e) {
+
+        }
     }
-
-
-
-
 
 
 }

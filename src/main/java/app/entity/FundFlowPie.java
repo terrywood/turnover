@@ -16,7 +16,10 @@ import java.util.List;
 @Entity
 public class FundFlowPie implements java.io.Serializable {
 
-    @JsonIgnore
+    public FundFlowPie() {
+
+    }
+
     @Id
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
@@ -24,31 +27,16 @@ public class FundFlowPie implements java.io.Serializable {
     @JsonFormat(pattern = "yyyyMMdd", timezone="GMT+8")
     Date date;
 
-    @Transient
-    public List<FundFlowPie> greater;
-
-    public FundFlowPie() {
-    }
-
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name="content", columnDefinition="mediumtext", nullable=true)
-    String detail;
-
-    @JsonProperty(value = "close_px")
-    Double close;
-
+    @JsonIgnore
+    String code;
 
     @Column(name = "ddx", unique = false, nullable = true)
-    @JsonProperty(value = "hslddx")
     Double ddx;
 
     @Column(name = "ddy", unique = false, nullable = true)
-    @JsonProperty(value = "hslddy")
     Double ddy;
 
-    @JsonIgnore
-    String code;
+
 
     Double jiPrice;
     Double daPrice;
@@ -56,11 +44,20 @@ public class FundFlowPie implements java.io.Serializable {
     Double sanPrice;
     Double masterLv;
 
-    boolean isSplit;
+
+/*
+    @Lob
+    @Basic(fetch = FetchType.LAZY)
+    @Column(name="content", columnDefinition="mediumtext", nullable=true)
+    String detail;
+
+    @JsonProperty(value = "close_px")
+    Double close;*/
+
+
 
 
     //@OneToOne(fetch = FetchType.LAZY, mappedBy = "fundFlowPie", cascade = CascadeType.ALL)
-
     @OneToOne(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
     @PrimaryKeyJoinColumn
     private  FundFlowPieDetail fundFlowPieDetail;

@@ -1,6 +1,8 @@
-package app.entity;
+package app.bean;
 
+import app.entity.FundFlowPie;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Data;
 
@@ -12,7 +14,8 @@ import java.util.List;
 
 @Data
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiResult {
     String status;
-    List<FundFlowPie> data;
+    PieData data;
 }

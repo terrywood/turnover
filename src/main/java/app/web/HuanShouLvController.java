@@ -26,7 +26,7 @@ public class HuanShouLvController {
         for(FundFlowPie pie : pageList.getContent()){
             long id  = pie.getId();
             java.util.List<FundFlowPie> greater = huanShouLvService.findByCodeAndIdGreaterThan(pie.getCode(), id, 5);
-            pie.setGreater(greater);
+           // pie.setGreater(greater);
         }
         model.addAttribute("pageList", pageList);
         return "huanShouLv/pressEat";

@@ -16,7 +16,7 @@ public class FundFlowPieSlave {
     @Id
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
-    private String code;
+    //private String code;
     private Double totalBuyDang; //买入总单数
     private Double totalSellDang; //卖出总单数
 
