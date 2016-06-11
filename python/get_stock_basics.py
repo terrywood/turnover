@@ -10,4 +10,4 @@ engine = create_engine('mysql://root:@127.0.0.1/turnover?charset=utf8')
 import tushare as ts
 df = ts.get_stock_basics()
 dtype={'code': String(length=6),'name': String(length=50),'industry': String(length=50),'area': String(length=50)}
-df.to_sql('stock_basics',engine,index_label='id',if_exists='append',dtype=dtype )
+df.to_sql('stock',engine,index_label='id',if_exists='replace',dtype=dtype )

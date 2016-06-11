@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.Repository;
+
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -37,7 +37,8 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
             " and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" )
 */
     @Query(value ="select t from FundFlowPie t  join fetch t.fundFlowPieDetail join fetch t.fundFlowPieMaster join fetch t.fundFlowPieSlave where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu" +
-            " and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" ,
+            " and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" +
+            " " ,
      countQuery = "select count(t) from FundFlowPie t  where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou")
     Page<FundFlowPie> findPressEat( Pageable pageable);
 
@@ -45,5 +46,5 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
 
 
 
-    List<FundFlowPie> findByCodeAndIdGreaterThan(String code,Long id, Pageable pageable);
+    List<FundFlowPie> findByStockIdAndIdGreaterThan(String code, Long id, Pageable pageable);
 }

@@ -30,18 +30,18 @@
                     <th>时间</th>
                     <th>股票</th>
                     <th>收盘价</th>
-                    <th>+1</th>
+                   <%-- <th>+1</th>
                     <th>+3</th>
-                    <th>+5</th>
+                    <th>+5</th>--%>
                 </tr>
                 </thead>
                 <tbody>
                 <c:forEach items="${pageList.content}" var="item">
                 <tr >
                     <td><fmt:formatDate value="${item.date}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
-                    <td >${item.code}</td>
-                    <td >${item.close}</td>
-                    <td ><fmt:formatNumber  type="percent" value="${(item.greater[0].close - item.close )/item.close}"></fmt:formatNumber>
+                    <td >${item.stock.id}</td>
+                    <td >${item.stock.name}</td>
+                <%--    <td ><fmt:formatNumber  type="percent" value="${(item.greater[0].close - item.close )/item.close}"></fmt:formatNumber>
                         <br/>
                         <fmt:formatDate value="${item.greater[0].date}" pattern="yyyy-MM-dd"></fmt:formatDate>
                     </td>
@@ -52,7 +52,7 @@
                     <td ><fmt:formatNumber  type="percent" value="${(item.greater[4].close - item.close )/item.close}"></fmt:formatNumber>
                         <br/>
                         <fmt:formatDate value="${item.greater[4].date}" pattern="yyyy-MM-dd"></fmt:formatDate>
-                    </td>
+                    </td>--%>
                 </tr>
                 </c:forEach>
                 </tbody>

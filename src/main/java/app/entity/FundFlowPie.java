@@ -24,18 +24,15 @@ public class FundFlowPie implements java.io.Serializable {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    @JsonFormat(pattern = "yyyyMMdd", timezone="GMT+8")
+    @JsonFormat(pattern = "yyyyMMdd", timezone = "GMT+8")
     Date date;
 
-    @JsonIgnore
-    String code;
 
     @Column(name = "ddx", unique = false, nullable = true)
     Double ddx;
 
     @Column(name = "ddy", unique = false, nullable = true)
     Double ddy;
-
 
 
     Double jiPrice;
@@ -50,26 +47,26 @@ public class FundFlowPie implements java.io.Serializable {
     @Basic(fetch = FetchType.LAZY)
     @Column(name="content", columnDefinition="mediumtext", nullable=true)
     String detail;
-
-    @JsonProperty(value = "close_px")
-    Double close;*/
+*/
 
 
+    @ManyToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_id",referencedColumnName = "id")
+    private Stock stock;
 
+    // private String stockId;
 
-    //@OneToOne(fetch = FetchType.LAZY, mappedBy = "fundFlowPie", cascade = CascadeType.ALL)
-    @OneToOne(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @PrimaryKeyJoinColumn
-    private  FundFlowPieDetail fundFlowPieDetail;
+    private FundFlowPieDetail fundFlowPieDetail;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @PrimaryKeyJoinColumn
-    private  FundFlowPieMaster fundFlowPieMaster;
+    private FundFlowPieMaster fundFlowPieMaster;
 
-    @OneToOne(fetch = FetchType.LAZY, cascade={CascadeType.ALL})
+    @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @PrimaryKeyJoinColumn
-    private  FundFlowPieSlave fundFlowPieSlave;
-
+    private FundFlowPieSlave fundFlowPieSlave;
 
 
 }

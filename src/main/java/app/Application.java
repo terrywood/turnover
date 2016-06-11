@@ -1,5 +1,7 @@
 package app;
 
+import app.repository.FundFlowPieRepository;
+import app.repository.StockRepository;
 import app.service.HuanShouLvService;
 import app.service.TongUnionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -15,8 +17,12 @@ import org.springframework.boot.context.web.SpringBootServletInitializer;
 import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @EnableTransactionManagement
 @EnableCaching
@@ -35,8 +41,13 @@ public class Application extends SpringBootServletInitializer {
     TongUnionService tongUnionService;
     @Value("${fetch.huanshoulv.stocks}")
     public String stockFile;
+    @Autowired
+    JdbcTemplate jdbcTemplate;
 
-
+    @Autowired
+    StockRepository stockRepository;
+    @Autowired
+    FundFlowPieRepository fundFlowPieRepository;
 
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
@@ -65,11 +76,40 @@ public class Application extends SpringBootServletInitializer {
             //huanShouLvService.fetchPieRaw();
             //huanShouLvService.fetchBoomRaw();
             //huanShouLvService.fetchSurgeRaw();
-            huanShouLvService.save2DB("20160602");
+          //  huanShouLvService.save2DB("20160602");
       /*      huanShouLvService.save2DB("20160603");
             huanShouLvService.save2DB("20160606");
             huanShouLvService.save2DB("20160607");
             huanShouLvService.save2DB("20160608");*/
+        };
+    }
+
+    @Bean
+    public CommandLineRunner day() {
+        return (args) -> {
+            long t1= System.currentTimeMillis();
+            List<Object[]> batchArgs = new ArrayList<>();
+            for(int i=2; i<100000;i++){
+                Object[] obj1 = new Object[6];
+                obj1[0] =i;
+                obj1[1] =2;
+                obj1[2] =3;
+                obj1[3] =4;
+                obj1[4] =5;
+                obj1[5] =6;
+                batchArgs.add(obj1);
+            }
+
+            jdbcTemplate.batchUpdate("insert into stock_day (id,close,high,low,open,volume) VALUES (?,?,?,?,?,?)",batchArgs);
+
+            long t2 = (System.currentTimeMillis() -t1 )/1000;
+
+            System.out.println("use times sec:" +t2);
+            System.out.println("use times sec:" +t2);
+            System.out.println("use times sec:" +t2);
+            System.out.println("use times sec:" +t2);
+            System.out.println("use times sec:" +t2);
+            System.out.println("use times sec:" +t2);
         };
     }
 

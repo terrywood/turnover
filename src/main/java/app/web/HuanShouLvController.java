@@ -24,8 +24,8 @@ public class HuanShouLvController {
                            Model model) {
         Page<FundFlowPie> pageList = huanShouLvService.findPressEat(page-1,size);
         for(FundFlowPie pie : pageList.getContent()){
-            long id  = pie.getId();
-            java.util.List<FundFlowPie> greater = huanShouLvService.findByCodeAndIdGreaterThan(pie.getCode(), id, 5);
+           // long id  = pie.getId();
+           // java.util.List<FundFlowPie> greater = huanShouLvService.findByCodeAndIdGreaterThan(pie.getCode(), id, 5);
            // pie.setGreater(greater);
         }
         model.addAttribute("pageList", pageList);

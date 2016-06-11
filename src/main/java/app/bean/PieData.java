@@ -2,6 +2,7 @@ package app.bean;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 /**
@@ -19,6 +20,19 @@ public class PieData {
     @Data
     @JsonIgnoreProperties(ignoreUnknown = true)
     private class Real {
-        Double  up_px;
+        @JsonProperty(value = "up_px" )
+        Double  up;
+        @JsonProperty(value = "high_px" )
+        Double  high;
+        @JsonProperty(value = "low_px" )
+        Double  low;
+        @JsonProperty(value = "down_px" )
+        Double  down;
+        @JsonProperty(value = "preclose_px" )
+        Double  preclose;
+        @JsonProperty(value = "last_px" )
+        Double  close;
+        @JsonProperty(value = "trade_status" )
+        String status;
     }
 }

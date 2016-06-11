@@ -2,10 +2,7 @@ package app.service;
 
 import app.bean.ApiResult;
 import app.bean.PieData;
-import app.entity.FundFlowPie;
-import app.entity.FundFlowPieDetail;
-import app.entity.FundFlowPieMaster;
-import app.entity.FundFlowPieSlave;
+import app.entity.*;
 import app.repository.FundFlowPieDetailRepository;
 import app.repository.FundFlowPieMasterRepository;
 import app.repository.FundFlowPieRepository;
@@ -54,10 +51,6 @@ import java.util.Map;
 @Service
 public class HuanShouLvService {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
-
-/*    @Value("${save.huanshoulv.data.path}")
-    public String filePath;*/
-
     @Value("${save.huanshoulv.raw.path}")
     public String rawPath;
     private static String DOMAIN = "http://server.huanshoulv.com/";
@@ -75,9 +68,9 @@ public class HuanShouLvService {
     ObjectMapper objectMapper;
     @Autowired
     JdbcTemplate jdbcTemplate;
-
     @Autowired
     TongUnionService tongUnionService;
+    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
    /* @Scheduled(cron = "0 0/15 9-20 * * MON-FRI")
     public void fetchData() {
        String today = DateFormatUtils.format(new Date(), "yyyyMMdd");
@@ -104,12 +97,15 @@ public class HuanShouLvService {
     public Page<FundFlowPie> findPressEat(int page, int size) {
         Pageable pageable = new PageRequest(page, size, new Sort(Sort.Direction.ASC, "id"));
         Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(pageable);
+
+      /*  Specification spec;
+        fundFlowPieRepository.findAll(spec)*/;
         return list;
     }
 
     public List<FundFlowPie> findByCodeAndIdGreaterThan(String code, Long id, int size) {
         Pageable pageable = new PageRequest(0, size, new Sort(Sort.Direction.ASC, "id"));
-        return fundFlowPieRepository.findByCodeAndIdGreaterThan(code, id, pageable);
+        return fundFlowPieRepository.findByStockIdAndIdGreaterThan(code, id, pageable);
 
     }
 
@@ -194,7 +190,7 @@ public class HuanShouLvService {
 
     }*/
 
-    SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+
 
     @Transactional
     public void save2DB(String day) throws ParseException {
@@ -215,7 +211,8 @@ public class HuanShouLvService {
                             FundFlowPie entity = new FundFlowPie();
                             Long id = Long.valueOf(day + code);
                             entity.setId(id);
-                            entity.setCode(code);
+                           // entity.setStockId(code);
+                            entity.setStock(new Stock(code));
                             entity.setDdy(pieData.getHslddy());
                             entity.setDdx(pieData.getHslddx());
                             entity.setDate(date);
@@ -251,7 +248,10 @@ public class HuanShouLvService {
                             entity.setFundFlowPieDetail(detail);
                             slave.setId(entity.getId());
                             entity.setFundFlowPieSlave(slave);
-                            list.add(entity);
+                           // list.add(entity);
+
+                            System.out.println(pieData.getReal());
+
                         }
 
 
