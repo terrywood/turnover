@@ -1,6 +1,7 @@
 package http;
 
 import app.bean.ApiDayResult;
+import app.service.GetFengRawDailyThread;
 import app.service.GetSinaRawDailyThread;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
@@ -25,79 +26,34 @@ import java.util.concurrent.Executors;
 public class TestIfeng {
 
 
-
-
-    public void fetchSinaData(String code){
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-        ObjectMapper jacksonObjectMapper = new ObjectMapper();
-        String _code = code.startsWith("60")?"sh":"sz" + code;
-        try {
-            URL url =new URL("http://api.finance.ifeng.com/akdaily/?code="+_code+"&type=last");
-            String _file="D:/Terry/cloud/OneDrive/data/day/"+code+".json";
-            File file = new File(_file);
-            if(file.exists()){
-                ApiDayResult oldFile = jacksonObjectMapper.readValue(file, ApiDayResult.class);
-                List<String[]> list  = oldFile.getRecord();
-                String last[] = list.get(list.size()-1);
-                Date lastDate = sdf.parse(last[0]);
-                boolean append = false;
-                ApiDayResult result = jacksonObjectMapper.readValue(url, ApiDayResult.class);
-                List<String[]> list2 = result.getRecord();
-                for(String[] args :list2){
-                    Date date = sdf.parse(args[0]);
-                    if(date.after(lastDate)){
-                        list.add(args);
-                        append = true;
-                        //System.out.println("write file code["+code+"] date["+date+"]");
-                    }
-                }
-                if(append){
-                    jacksonObjectMapper.writeValue(file,oldFile);
-                }
-            }else{
-               // FileUtils.copyURLToFile(url,file);
-                ApiDayResult oldFile = jacksonObjectMapper.readValue(url, ApiDayResult.class);
-                List<String[]> list  = oldFile.getRecord();
-                if(list!=null && !list.isEmpty()){
-                    jacksonObjectMapper.writeValue(file,oldFile);
-                }
-            }
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    public void fetchSinaData(String code) {
 
 
     }
 
 
-    public void read(){
+    public void read() {
+        ExecutorService service = Executors.newFixedThreadPool(25);
         Reader in = null;
-        String stockFile="D:/Terry/cloud/OneDrive/data/stockinfo/all.csv";
+        String stockFile = "D:/Terry/cloud/OneDrive/data/stockinfo/all.csv";
+        String path = "D:/Terry/cloud/OneDrive/data/day/";
         try {
             in = new FileReader(stockFile);
             Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
-            for(CSVRecord record : records){
-                String code =record.get(0);
-                fetchSinaData(code);
+            for (CSVRecord record : records) {
+                String code = record.get(0);
+                service.execute(new GetFengRawDailyThread(code, path));
                 //System.out.println(code);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+        service.shutdown();
     }
 
     public static void main(String[] args) throws IOException {
-
-
-
         TestIfeng ifeng = new TestIfeng();
         ifeng.read();
-
-   /*     ObjectMapper jacksonObjectMapper = new ObjectMapper();
-        ApiDayResult result = jacksonObjectMapper.readValue(new URL("http://api.finance.ifeng.com/akdaily/?code=sh600258&type=last"), ApiDayResult.class);
-        String[] one = result.getRecord().get(0);
-        System.out.println(one[0]);*/
     }
 
 }
