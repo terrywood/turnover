@@ -78,9 +78,9 @@ public class Application extends SpringBootServletInitializer {
     @Bean
     public CommandLineRunner demo() {
         return (args) -> {
-            //huanShouLvService.fetchPieRaw();
-            //huanShouLvService.fetchBoomRaw();
-            //huanShouLvService.fetchSurgeRaw();
+            huanShouLvService.fetchPieRaw();
+            huanShouLvService.fetchBoomRaw();
+            huanShouLvService.fetchSurgeRaw();
             //  huanShouLvService.save2DB("20160602");
       /*      huanShouLvService.save2DB("20160603");
             huanShouLvService.save2DB("20160606");
@@ -91,7 +91,7 @@ public class Application extends SpringBootServletInitializer {
 
     private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
-    @Bean
+    //@Bean
     public CommandLineRunner day() {
         return (args) -> {
             long t1 = System.currentTimeMillis();
