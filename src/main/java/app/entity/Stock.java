@@ -12,6 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @Entity
+
 public class Stock  implements java.io.Serializable {
     @Id
     private String id; // 股票编码
