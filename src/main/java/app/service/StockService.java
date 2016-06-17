@@ -43,6 +43,9 @@ public class StockService {
      * */
     private static String  ALL="http://218.244.146.57/static/all.csv";
 
+    /**交易日历*/
+    private static String  calAll="http://218.244.146.57/static/calAll.csv";
+
 
     //股票基本信息
     public void getEqu() throws IOException {
