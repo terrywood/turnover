@@ -58,8 +58,10 @@ public class StockService {
 
     @Autowired
     private StockRepository stockRepository;
-    //股票基本信息
-    public void getAndSaveInfo() throws IOException {
+
+
+
+    public void getInfo() throws IOException {
       /*  File file = File.createTempFile("csv", "csv");
         FileUtils.copyURLToFile(new URL(ALL), file);
         Reader in = new FileReader(file);

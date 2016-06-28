@@ -42,9 +42,8 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
      countQuery = "select count(t) from FundFlowPie t  where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou")
     Page<FundFlowPie> findPressEat( Pageable pageable);
 
+
     Page<FundFlowPie> findAll(Pageable pageable);
-
-
-
     List<FundFlowPie> findByStockIdAndIdGreaterThan(String code, Long id, Pageable pageable);
+
 }

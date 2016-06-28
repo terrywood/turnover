@@ -2,10 +2,7 @@ package app.entity;
 
 import lombok.Data;
 
-import javax.persistence.Column;
-import javax.persistence.EmbeddedId;
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.util.Date;
 
 /**
@@ -37,7 +34,10 @@ public class StockDay {
     @Column(name = "id", unique = true, nullable = false)
     private Long id;
 
-    private String code;
+    @ManyToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.LAZY)
+    @JoinColumn(name = "stock_id",referencedColumnName = "id")
+    private Stock stock;
+
     private Date date;
     private double open = 0.0; // 开盘价
     private double high = 0.0; // 最高价

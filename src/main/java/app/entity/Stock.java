@@ -44,6 +44,11 @@ public class Stock  implements java.io.Serializable {
     private String area;
     private Double pe;
     private Double outstanding;
+
+    //private Double outstandingAssets;
+
+    private Double outstandingAssets;
+
     private Double totals;
     private Double totalAssets;
     private Double reserved;
@@ -52,7 +57,13 @@ public class Stock  implements java.io.Serializable {
     private Double bvps;
     private Double pb;
 
+    //涨停基因
+    private Integer limitGene;
+    //跑赢股票
+    private Double prop;
 
+    //平均涨停交易日
+    private Integer avgNoOneSurged;
 
     public Stock(String code) {
         this.id=code;

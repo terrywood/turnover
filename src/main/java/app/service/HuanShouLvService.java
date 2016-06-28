@@ -7,6 +7,7 @@ import app.repository.*;
 import app.util.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtilsBean;
+import org.apache.commons.collections.MapUtils;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
@@ -25,6 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -34,6 +36,8 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -84,8 +88,31 @@ public class HuanShouLvService {
          fetch(today);
          save2DB(today);
        */
+    }
 
+    public  void fetchStockExtend() throws IOException {
+        String str =DOMAIN+"aimapp/stock/forecast/";
+        CloseableHttpClient httpClient = HttpClients.createDefault();
+        List<Stock> list =this.stockRepository.findAll();
+        List<Object[]> batchArgs = new ArrayList<>();
+        for(Stock stock :list){
+            HttpGet httpget = new HttpGet(str + stock.getId());
+            httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
+            CloseableHttpResponse response = httpClient.execute(httpget);
+            HttpEntity entity = response.getEntity();
+            Map apiStockResult = objectMapper.readValue(entity.getContent(),Map.class);
+            Map data = MapUtils.getMap(apiStockResult,"data");
+            Map _stock = MapUtils.getMap(data,"stock");
+            Map limitGene = MapUtils.getMap(_stock,"limitGene");
+            //System.out.println(limitGene);
+            if(limitGene!=null){
+                Object[] values = new Object[]{limitGene.get("avgNoOneSurged"),limitGene.get("limitGene"),limitGene.get("prop"),stock.getId()};
+                batchArgs.add(values);
+            }
+        }
 
+        int[] result =  jdbcTemplate.batchUpdate("update stock set avg_no_one_surged =? ,limit_gene=?,prop=? where id=?", batchArgs);
+        System.out.println("update result " + result.length);
     }
 
     /**
@@ -124,8 +151,6 @@ public class HuanShouLvService {
     public void jdbcTemplate() {
         Map map = jdbcTemplate.queryForMap("SELECT count(*) from Fund_Flow_Pie");
         System.out.println("----------------------------------------");
-        System.out.println("----------------------------------------");
-        System.out.println("----------------------------------------");
         System.out.println(map);
 
     }
@@ -133,65 +158,6 @@ public class HuanShouLvService {
     public FundFlowPie findOne(Long id) {
         return fundFlowPieRepository.findOne(id);
     }
-
-    /**
-     * 当一只股票符合，买单均手>卖单均手，
-     * 大户买入占比>大户卖出占比，
-     * 机构买入占比>机构卖出占比；
-     * 再观察被动买单均手>=被动卖单均手，
-     * 同时被动买单均手>=主动买单均手，
-     * 说明主力看好后市，
-     * 压盘吃货。
-     */
-/*
-    public void splitDate() {
-        String[] fields = AppUtils.fields;
-        List<FundFlowPie> entityList = fundFlowPieRepository.findByIsSplit(false);
-        BeanUtilsBean beanUtils = BeanUtilsBean.getInstance();
-        for (FundFlowPie entity : entityList) {
-            String data[] = entity.getCode().split(",");
-            entity.setJiPrice(Double.valueOf(data[121]));
-            entity.setDaPrice(Double.valueOf(data[122]));
-            entity.setZhongPrice(Double.valueOf(data[123]));
-            entity.setSanPrice(Double.valueOf(data[124]));
-            entity.setMasterLv(Double.valueOf(data[134]));
-
-            // System.out.println(entity);
-            FundFlowPieDetail obj = new FundFlowPieDetail();
-            FundFlowPieMaster master = new FundFlowPieMaster();
-            FundFlowPieSlave slave = new FundFlowPieSlave();
-            for (int i = 1; i <= 40; i++) {
-                try {
-                    beanUtils.setProperty(obj, fields[i], data[i]);
-                    beanUtils.setProperty(master, fields[i], data[i + 40]);
-                    beanUtils.setProperty(slave, fields[i], data[i + 80]);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                }
-            }
-            master.setId(entity.getId());
-            master.setCode(entity.getCode());
-            entity.setFundFlowPieMaster(master);
-            //  masterList.add(master);
-            obj.setCode(entity.getCode());
-            obj.setId(entity.getId());
-            // detailList.add(obj);
-            entity.setFundFlowPieDetail(obj);
-            slave.setCode(entity.getCode());
-            slave.setId(entity.getId());
-            entity.setFundFlowPieSlave(slave);
-            //   slaveList.add(slave);
-        }
-        fundFlowPieRepository.save(entityList);
-*//*        fundFlowPieDetailRepository.save(detailList);
-        fundFlowPieMasterRepository.save(masterList);
-        fundFlowPieSlaveRepository.save(slaveList);*//*
-
-    }*/
-
-
 
     @Transactional
     public void save2DB(String day) throws ParseException {

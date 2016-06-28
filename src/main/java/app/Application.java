@@ -1,16 +1,11 @@
 package app;
 
-import app.bean.ApiDayResult;
 import app.repository.FundFlowPieRepository;
 import app.repository.StockRepository;
 import app.service.HuanShouLvService;
 import app.service.StockDayService;
 import app.service.StockService;
-import app.service.TongUnionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.apache.commons.io.FilenameUtils;
-import org.apache.commons.lang3.ArrayUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,8 +24,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 import java.io.File;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
 
 @EnableTransactionManagement
 @EnableCaching
@@ -82,20 +75,24 @@ public class Application extends SpringBootServletInitializer {
    // @Bean
     public CommandLineRunner stock() {
         return (args) -> {
-            stockService.getAndSaveInfo();
+            stockService.getInfo();
         };
     }
-    
-    @Bean
+
+
+    //@Bean
     public CommandLineRunner daily() {
         return (args) -> {
-            stockDayService.getAndSaveInfo();
+            //stockDayService.getAndSaveInfo();
+            stockDayService.saveInfo2DB();
         };
     }
-    //@Bean
+    @Bean
     public CommandLineRunner huanShouLv() {
         return (args) -> {
-            huanShouLvService.fetchPieRaw();
+
+
+          /*  huanShouLvService.fetchPieRaw();
             huanShouLvService.fetchBoomRaw();
             huanShouLvService.fetchSurgeRaw();
 
@@ -103,10 +100,11 @@ public class Application extends SpringBootServletInitializer {
             File f = new File(folder);
             for(File file : f.listFiles()){
                 String day = file.getName();
-                System.out.println("=================================");
                 System.out.println(day);
                 huanShouLvService.save2DB(day);
-            }
+            }*/
+
+            huanShouLvService.fetchStockExtend();
         };
     }
 
@@ -115,34 +113,6 @@ public class Application extends SpringBootServletInitializer {
     //@Bean
     public CommandLineRunner day() {
         return (args) -> {
-            long t1 = System.currentTimeMillis();
-            String path = "D:\\Terry\\cloud\\OneDrive\\data\\day";
-            File dir = new File(path);
-            for (File file : dir.listFiles()) {
-                String code = FilenameUtils.getBaseName(file.getName());
-              /*  if (!code.equals("000001")) {
-                    continue;
-                }*/
-                List<Object[]> batchArgs = new ArrayList<>();
-                ApiDayResult oldFile = jacksonObjectMapper.readValue(file, ApiDayResult.class);
-                List<String[]> list = oldFile.getRecord();
-                for (String[] arg : list) {
-                    Object[] values = new Object[17];
-                    values[0] = (arg[0]);
-                    for (int i = 1; i < arg.length; i++) {
-                        values[i] = Double.valueOf(StringUtils.remove(arg[i], ","));
-                    }
-                    String id = StringUtils.remove(arg[0], "-") + code;
-                    values[15] = code;
-                    values[16] = Long.valueOf(id);
-                    //System.out.println(ArrayUtils.toString(values));
-                    batchArgs.add(values);
-                }
-                jdbcTemplate.update("delete from stock_day where code=?", code);
-                jdbcTemplate.batchUpdate("" +
-                        "insert into stock_day (date,open,high,close,low,volume,price_change,p_change,ma5,ma10,ma20,v_ma5,v_ma10,v_ma20,turnover,code,id)" +
-                        " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)", batchArgs);
-            }
         };
     }
 
