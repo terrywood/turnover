@@ -54,7 +54,7 @@ public class FundFlowPie implements java.io.Serializable {
     @JoinColumn(name = "stock_id",referencedColumnName = "id")
     private Stock stock;
 
-    // private String stockId;
+     //private String stockId;
 
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @PrimaryKeyJoinColumn

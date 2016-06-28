@@ -4,6 +4,8 @@ import app.bean.ApiDayResult;
 import app.repository.FundFlowPieRepository;
 import app.repository.StockRepository;
 import app.service.HuanShouLvService;
+import app.service.StockDayService;
+import app.service.StockService;
 import app.service.TongUnionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
@@ -44,12 +46,14 @@ public class Application extends SpringBootServletInitializer {
     @Autowired
     HuanShouLvService huanShouLvService;
     @Autowired
-    TongUnionService tongUnionService;
+    StockDayService stockDayService;
     @Value("${fetch.huanshoulv.stocks}")
     public String stockFile;
     @Autowired
     JdbcTemplate jdbcTemplate;
 
+    @Autowired
+    StockService stockService;
     @Autowired
     StockRepository stockRepository;
     @Autowired
@@ -75,17 +79,34 @@ public class Application extends SpringBootServletInitializer {
     }
 
 
+   // @Bean
+    public CommandLineRunner stock() {
+        return (args) -> {
+            stockService.getAndSaveInfo();
+        };
+    }
+    
     @Bean
-    public CommandLineRunner demo() {
+    public CommandLineRunner daily() {
+        return (args) -> {
+            stockDayService.getAndSaveInfo();
+        };
+    }
+    //@Bean
+    public CommandLineRunner huanShouLv() {
         return (args) -> {
             huanShouLvService.fetchPieRaw();
             huanShouLvService.fetchBoomRaw();
             huanShouLvService.fetchSurgeRaw();
-            //  huanShouLvService.save2DB("20160602");
-      /*      huanShouLvService.save2DB("20160603");
-            huanShouLvService.save2DB("20160606");
-            huanShouLvService.save2DB("20160607");
-            huanShouLvService.save2DB("20160608");*/
+
+            String folder ="D:\\Terry\\cloud\\OneDrive\\data\\huanshoulv_raw\\pie";
+            File f = new File(folder);
+            for(File file : f.listFiles()){
+                String day = file.getName();
+                System.out.println("=================================");
+                System.out.println(day);
+                huanShouLvService.save2DB(day);
+            }
         };
     }
 

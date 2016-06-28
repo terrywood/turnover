@@ -1,8 +1,12 @@
 package app.service;
 
+import app.entity.Stock;
+import app.repository.StockRepository;
+import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.input.BOMInputStream;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -11,11 +15,17 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by terry.wu on 2016/6/2 0002.
@@ -46,17 +56,40 @@ public class StockService {
     /**交易日历*/
     private static String  calAll="http://218.244.146.57/static/calAll.csv";
 
-
+    @Autowired
+    private StockRepository stockRepository;
     //股票基本信息
-    public void getEqu() throws IOException {
-        File file = File.createTempFile("csv", "csv");
+    public void getAndSaveInfo() throws IOException {
+      /*  File file = File.createTempFile("csv", "csv");
         FileUtils.copyURLToFile(new URL(ALL), file);
         Reader in = new FileReader(file);
+        */
+        List<Stock> ret = new ArrayList<>();
+        URL url = new URL(ALL);
+        Reader in = new InputStreamReader(new BOMInputStream(url.openStream()), "GBK");
         Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
+        BeanUtilsBean beanUtils = BeanUtilsBean.getInstance();
         for (CSVRecord record : records) {
-                System.out.println(record.get("code"));
+             Stock stock = new Stock();
+             Map<String ,String> map = record.toMap();
+             for(String key : map.keySet()){
+                 try {
+                     beanUtils.setProperty(stock,key,map.get(key));
+                 } catch (IllegalAccessException e) {
+                     e.printStackTrace();
+                 } catch (InvocationTargetException e) {
+                     e.printStackTrace();
+                 }
+             }
+            stock.setId(map.get("code"));
+            ret.add(stock);
         }
+        stockRepository.save(ret);
+
     }
+
+
+
 
 
 }

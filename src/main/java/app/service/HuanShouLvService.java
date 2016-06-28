@@ -3,10 +3,7 @@ package app.service;
 import app.bean.ApiResult;
 import app.bean.PieData;
 import app.entity.*;
-import app.repository.FundFlowPieDetailRepository;
-import app.repository.FundFlowPieMasterRepository;
-import app.repository.FundFlowPieRepository;
-import app.repository.FundFlowPieSlaveRepository;
+import app.repository.*;
 import app.util.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtilsBean;
@@ -70,6 +67,10 @@ public class HuanShouLvService {
     JdbcTemplate jdbcTemplate;
     @Autowired
     TongUnionService tongUnionService;
+
+    @Autowired
+    StockRepository stockRepository;
+
     SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
    /* @Scheduled(cron = "0 0/15 9-20 * * MON-FRI")
     public void fetchData() {
@@ -196,7 +197,7 @@ public class HuanShouLvService {
     public void save2DB(String day) throws ParseException {
         String[] fields = AppUtils.fields;
         Date date = sdf.parse(day);
-        String file = rawPath + day + "/";
+        String file = rawPath +"pie/"+ day + "/";
         File dir = new File(file);
         if (dir.isDirectory()) {
             List<FundFlowPie> list = new ArrayList<>();
@@ -212,7 +213,7 @@ public class HuanShouLvService {
                             Long id = Long.valueOf(day + code);
                             entity.setId(id);
                            // entity.setStockId(code);
-                            entity.setStock(new Stock(code));
+                            //entity.setStock(new Stock(code));
                             entity.setDdy(pieData.getHslddy());
                             entity.setDdx(pieData.getHslddx());
                             entity.setDate(date);
@@ -248,9 +249,9 @@ public class HuanShouLvService {
                             entity.setFundFlowPieDetail(detail);
                             slave.setId(entity.getId());
                             entity.setFundFlowPieSlave(slave);
-                           // list.add(entity);
+                            list.add(entity);
 
-                            System.out.println(pieData.getReal());
+                            //System.out.println(pieData.getReal());
 
                         }
 
@@ -266,6 +267,9 @@ public class HuanShouLvService {
             fundFlowPieRepository.save(list);
         }
     }
+
+
+
 
    /* public void fetch(String day) {
         ExecutorService consumerService = Executors.newFixedThreadPool(1);
@@ -292,12 +296,11 @@ public class HuanShouLvService {
 
     public void fetchPieRaw() {
         String folder = rawPath + "pie/" + DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
-        Iterable<CSVRecord> records = this.tongUnionService.getEqu();
-        int i = 1;
+        //Iterable<CSVRecord> records = this.tongUnionService.getEqu();
+        List<Stock> records  = stockRepository.findAll();
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        for (CSVRecord record : records) {
-            i++;
-            String ticker = record.get(0);
+        for (Stock record : records) {
+            String ticker = record.getId();
             File file = new File(folder + ticker + ".json");
             if (file.exists()) {
                 //file.lastModified();

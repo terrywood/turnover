@@ -1,6 +1,7 @@
 package http;
 
 import app.bean.ApiDayResult;
+import app.service.GetFengRawDailyThread;
 import app.service.GetSinaRawDailyThread;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.csv.CSVFormat;
@@ -41,7 +42,7 @@ public class TestIfeng {
             Iterable<CSVRecord> records = CSVFormat.RFC4180.withFirstRecordAsHeader().parse(in);
             for (CSVRecord record : records) {
                 String code = record.get(0);
-               // service.execute(new GetFengRawDailyThread(code, path));
+                service.execute(new GetFengRawDailyThread(code, path));
                 //System.out.println(code);
             }
         } catch (IOException e) {
