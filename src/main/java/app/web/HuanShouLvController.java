@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.text.ParseException;
+
 @Controller
 @RequestMapping("/shou")
 public class HuanShouLvController {
@@ -21,7 +23,7 @@ public class HuanShouLvController {
     public String greeting(
                            @RequestParam(value="page", required=false, defaultValue="1") int page,
                            @RequestParam(value="size", required=false, defaultValue="20") int size,
-                           Model model) {
+                           Model model) throws ParseException {
         Page<FundFlowPie> pageList = huanShouLvService.findPressEat(page-1,size);
         for(FundFlowPie pie : pageList.getContent()){
            // long id  = pie.getId();

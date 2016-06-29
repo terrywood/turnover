@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 
 import javax.transaction.Transactional;
-import java.util.List;
+import java.util.*;
 
 /**
  * Created by terry.wu on 2016/4/29 0029.
@@ -36,11 +36,12 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
    @Query("select t from FundFlowPie t  join fetch t.fundFlowPieDetail join fetch t.fundFlowPieMaster join fetch t.fundFlowPieSlave where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu" +
             " and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" )
 */
-    @Query(value ="select t from FundFlowPie t  join fetch t.fundFlowPieDetail join fetch t.fundFlowPieMaster join fetch t.fundFlowPieSlave where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu" +
+    @Query(value ="select t from FundFlowPie t  join fetch t.fundFlowPieDetail join fetch t.fundFlowPieMaster join fetch t.fundFlowPieSlave join fetch t.stock where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu" +
             " and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" +
-            " " ,
-     countQuery = "select count(t) from FundFlowPie t  where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou")
-    Page<FundFlowPie> findPressEat( Pageable pageable);
+            " and t.stock.limitGene>50 and t.date=?1" ,
+     countQuery = "select count(t) from FundFlowPie t  where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" +
+             " and t.stock.limitGene>50 and t.date=?1")
+    Page<FundFlowPie> findPressEat(Date date, Pageable pageable);
 
 
     Page<FundFlowPie> findAll(Pageable pageable);

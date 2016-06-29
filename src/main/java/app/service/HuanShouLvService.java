@@ -12,6 +12,7 @@ import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
+import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -45,10 +46,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.concurrent.*;
 
 /**
  * Created by terry.wu on 2016/5/18 0018.
@@ -95,10 +94,42 @@ public class HuanShouLvService {
        */
     }
 
-    public  void fetchStockExtend() throws IOException {
+    public  void fetchStockExtend() throws IOException, InterruptedException {
+        List<Stock> list = stockRepository.findAll();
+        List<Object[]> batchArgs = new ArrayList<>();
+        ExecutorService service = Executors.newFixedThreadPool(2);
+        List<Future<Map>> resultList = new ArrayList<Future<Map>>();
+        for(Stock stock :list){
+            String link = DOMAIN+"aimapp/stock/forecast/"+stock.getId();
+            Future<Map> future = service.submit(new GetShouLvThread(link));
+            resultList.add(future);
+        }
+        for (Future<Map> fs : resultList) {
+            try {
+                Map limitGene = fs.get();
+                if(limitGene!=null){
+                    Object[] values = new Object[]{limitGene.get("avgNoOneSurged"),limitGene.get("limitGene"),limitGene.get("prop"),limitGene.get("id")};
+                    batchArgs.add(values);
+                }
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            } finally {
+                //启动一次顺序关闭，执行以前提交的任务，但不接受新任务。如果已经关闭，则调用没有其他作用。
+                service.shutdown();
+            }
+        }
+
+        int[] result =  jdbcTemplate.batchUpdate("update stock set avg_no_one_surged =? ,limit_gene=?,prop=? where id=?", batchArgs);
+        System.out.println("update result " + result.length);
+
+    }
+    @Deprecated
+    public  void fetchStockExtendBak() throws IOException {
         String str =DOMAIN+"aimapp/stock/forecast/";
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        List<Stock> list =this.stockRepository.findAll();
+        List<Stock> list = stockRepository.findAll();
         List<Object[]> batchArgs = new ArrayList<>();
         for(Stock stock :list){
             HttpGet httpget = new HttpGet(str + stock.getId());
@@ -126,9 +157,10 @@ public class HuanShouLvService {
      * 再观察被动买单均手>=被动卖单均手，同时被动买单均手>=主动买单均手，说明主力看好后市，压盘吃货。
      * select s  from FundFlowPieSlave s , FundFlowPieMaster m where s.totalBuyShou>=s.totalSellShou and s.totalBuyShou>= m.totalBuyShou
      */
-    public Page<FundFlowPie> findPressEat(int page, int size) {
+    public Page<FundFlowPie> findPressEat(int page, int size) throws ParseException {
         Pageable pageable = new PageRequest(page, size, new Sort(Sort.Direction.ASC, "id"));
-        Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(pageable);
+        Date date = sdf.parse("20160602");
+        Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(date,pageable);
 
       /*  Specification spec;
         fundFlowPieRepository.findAll(spec)*/;
@@ -137,7 +169,6 @@ public class HuanShouLvService {
 
     public Page<FundFlowPie> findNewPressEat(int page, int size) {
         Pageable pageable = new PageRequest(page, size, new Sort(Sort.Direction.ASC, "id"));
-        Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(pageable);
         Specification spec = new Specification() {
             @Override
             public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
@@ -149,7 +180,7 @@ public class HuanShouLvService {
             }
         };
 
-        return list;
+        return null;
     }
 
 
@@ -203,7 +234,7 @@ public class HuanShouLvService {
                             Long id = Long.valueOf(day + code);
                             entity.setId(id);
                            // entity.setStockId(code);
-                            //entity.setStock(new Stock(code));
+                            entity.setStock(new Stock(code));
                             entity.setDdy(pieData.getHslddy());
                             entity.setDdx(pieData.getHslddx());
                             entity.setDate(date);

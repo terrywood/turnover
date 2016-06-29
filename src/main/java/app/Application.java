@@ -23,6 +23,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
+import java.io.File;
 import java.util.Date;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -81,14 +82,28 @@ public class Application extends SpringBootServletInitializer {
     }
 
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
     //@Bean
+    public CommandLineRunner huanShouLv() {
+        return (args) -> {
+            String folder ="D:\\Terry\\cloud\\OneDrive\\data\\huanshoulv_raw\\pie";
+            File f = new File(folder);
+            for(File file : f.listFiles()){
+                String day = file.getName();
+                System.out.println(day);
+                huanShouLvService.save2DB(day);
+            }
+
+        };
+    }
+
+    @Bean
     public CommandLineRunner everydayAfter1500() {
         return (args) -> {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
             long start = System.currentTimeMillis();
             Date today = DateUtils.truncate(new java.util.Date(), Calendar.DATE);
-            stockService.getInfoAnaSaveStock2DB();
+ /*           stockService.getInfoAnaSaveStock2DB();
             System.out.println("use time fetch data ok step 1");
             huanShouLvService.fetchPieRaw();
             System.out.println("use time fetch data ok step 2");
@@ -97,10 +112,11 @@ public class Application extends SpringBootServletInitializer {
             huanShouLvService.fetchSurgeRaw();
             System.out.println("use time fetch data ok step 4");
             huanShouLvService.save2DB(sdf.format(today));
-            System.out.println("use time fetch data ok step 5");
+            System.out.println("use time fetch data ok step 5");*/
             huanShouLvService.fetchStockExtend();
             System.out.println("use time fetch data ok step 6");
-            stockDayService.getAndSaveInfo();
+
+            //stockDayService.getAndSaveInfo();
             System.out.println("use time fetch data ok step 8");
             long end = (System.currentTimeMillis() - start )/1000;
             System.out.println("use time fetch data ["+end+"]");
