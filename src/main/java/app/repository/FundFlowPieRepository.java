@@ -38,9 +38,9 @@ public interface FundFlowPieRepository extends JpaRepository<FundFlowPie, Long>,
 */
     @Query(value ="select t from FundFlowPie t  join fetch t.fundFlowPieDetail join fetch t.fundFlowPieMaster join fetch t.fundFlowPieSlave join fetch t.stock where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu" +
             " and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" +
-            " and t.stock.limitGene>50 and t.date=?1" ,
+            " and t.stock.limitGene>50 and t.stock.outstandingAssets<1000000 and t.date=?1" ,
      countQuery = "select count(t) from FundFlowPie t  where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou" +
-             " and t.stock.limitGene>50 and t.date=?1")
+             " and t.stock.limitGene>50 and t.stock.outstandingAssets<1000000 and t.date=?1")
     Page<FundFlowPie> findPressEat(Date date, Pageable pageable);
 
 
