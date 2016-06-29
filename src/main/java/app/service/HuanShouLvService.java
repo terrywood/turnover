@@ -94,7 +94,7 @@ public class HuanShouLvService {
        */
     }
 
-    public  void fetchStockExtend() throws IOException, InterruptedException {
+    /*public  void fetchStockExtend() throws IOException, InterruptedException {
         List<Stock> list = stockRepository.findAll();
         List<Object[]> batchArgs = new ArrayList<>();
         ExecutorService service = Executors.newFixedThreadPool(2);
@@ -124,28 +124,31 @@ public class HuanShouLvService {
         int[] result =  jdbcTemplate.batchUpdate("update stock set avg_no_one_surged =? ,limit_gene=?,prop=? where id=?", batchArgs);
         System.out.println("update result " + result.length);
 
-    }
-    @Deprecated
-    public  void fetchStockExtendBak() throws IOException {
+    }*/
+
+    public  void fetchStockExtend()  {
         String str =DOMAIN+"aimapp/stock/forecast/";
         CloseableHttpClient httpClient = HttpClients.createDefault();
         List<Stock> list = stockRepository.findAll();
         List<Object[]> batchArgs = new ArrayList<>();
         for(Stock stock :list){
-            HttpGet httpget = new HttpGet(str + stock.getId());
-            httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
-            CloseableHttpResponse response = httpClient.execute(httpget);
-            HttpEntity entity = response.getEntity();
-            Map apiStockResult = objectMapper.readValue(entity.getContent(),Map.class);
-            Map data = MapUtils.getMap(apiStockResult,"data");
-            Map _stock = MapUtils.getMap(data,"stock");
-            Map limitGene = MapUtils.getMap(_stock,"limitGene");
-            if(limitGene!=null){
-                Object[] values = new Object[]{limitGene.get("avgNoOneSurged"),limitGene.get("limitGene"),limitGene.get("prop"),stock.getId()};
-                batchArgs.add(values);
+            try {
+                HttpGet httpget = new HttpGet(str + stock.getId());
+                httpget.setHeader("user-agent", "IM821OSmCn2wzlOW8y5FDawuhtPBrwCl");
+                CloseableHttpResponse response = httpClient.execute(httpget);
+                HttpEntity entity = response.getEntity();
+                Map apiStockResult = objectMapper.readValue(entity.getContent(),Map.class);
+                Map data = MapUtils.getMap(apiStockResult,"data");
+                Map _stock = MapUtils.getMap(data,"stock");
+                Map limitGene = MapUtils.getMap(_stock,"limitGene");
+                if(limitGene!=null){
+                    Object[] values = new Object[]{limitGene.get("avgNoOneSurged"),limitGene.get("limitGene"),limitGene.get("prop"),stock.getId()};
+                    batchArgs.add(values);
+                }
+            }catch (Exception e){
+                System.out.println("code["+stock.getId()+"]"+e.getMessage());
             }
         }
-
         int[] result =  jdbcTemplate.batchUpdate("update stock set avg_no_one_surged =? ,limit_gene=?,prop=? where id=?", batchArgs);
         System.out.println("update result " + result.length);
     }
