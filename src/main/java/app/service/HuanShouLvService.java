@@ -26,11 +26,16 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
 import java.io.File;
 import java.io.FileInputStream;
@@ -104,7 +109,6 @@ public class HuanShouLvService {
             Map data = MapUtils.getMap(apiStockResult,"data");
             Map _stock = MapUtils.getMap(data,"stock");
             Map limitGene = MapUtils.getMap(_stock,"limitGene");
-            //System.out.println(limitGene);
             if(limitGene!=null){
                 Object[] values = new Object[]{limitGene.get("avgNoOneSurged"),limitGene.get("limitGene"),limitGene.get("prop"),stock.getId()};
                 batchArgs.add(values);
@@ -130,6 +134,26 @@ public class HuanShouLvService {
         fundFlowPieRepository.findAll(spec)*/;
         return list;
     }
+
+    public Page<FundFlowPie> findNewPressEat(int page, int size) {
+        Pageable pageable = new PageRequest(page, size, new Sort(Sort.Direction.ASC, "id"));
+        Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(pageable);
+        Specification spec = new Specification() {
+            @Override
+            public Predicate toPredicate(Root root, CriteriaQuery query, CriteriaBuilder cb) {
+//select count(t) from FundFlowPie t  where t.fundFlowPieDetail.totalBuyShou>t.fundFlowPieDetail.totalSellShou and  t.fundFlowPieDetail.daBuyGu>t.fundFlowPieDetail.daSellGu and t.fundFlowPieDetail.jiBuyGu>t.fundFlowPieDetail.jiSellGu and t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieSlave.totalSellShou and  t.fundFlowPieSlave.totalBuyShou>=t.fundFlowPieMaster.totalBuyShou
+                Predicate predicate = cb.notEqual(root.get("status").as(Integer.class), 1);
+
+                query.where(predicate);
+                return query.getRestriction();
+            }
+        };
+
+        return list;
+    }
+
+
+
 
     public List<FundFlowPie> findByCodeAndIdGreaterThan(String code, Long id, int size) {
         Pageable pageable = new PageRequest(0, size, new Sort(Sort.Direction.ASC, "id"));
@@ -247,7 +271,7 @@ public class HuanShouLvService {
                 String ticker = record.get(0);
                 File fileName = new File(file + ticker + ".json");
                 if (!fileName.exists()) {
-                    GetThread getThread = new GetThread(fileName, ticker);
+                    GetShouLvThread getThread = new GetShouLvThread(fileName, ticker);
                     consumerService.execute(getThread);
                 }
             }
@@ -262,7 +286,6 @@ public class HuanShouLvService {
 
     public void fetchPieRaw() {
         String folder = rawPath + "pie/" + DateFormatUtils.format(new Date(), "yyyyMMdd") + "/";
-        //Iterable<CSVRecord> records = this.tongUnionService.getEqu();
         List<Stock> records  = stockRepository.findAll();
         CloseableHttpClient httpClient = HttpClients.createDefault();
         for (Stock record : records) {
@@ -285,7 +308,6 @@ public class HuanShouLvService {
 
             }
         }
-        log.info("----------------fetchPieRaw done");
     }
 
     //涨停强度

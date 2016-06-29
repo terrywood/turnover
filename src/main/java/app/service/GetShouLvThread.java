@@ -18,7 +18,7 @@ import java.io.IOException;
 /**
  * Created by Administrator on 2014/12/4.
  */
-public class GetThread extends Thread {
+public class GetShouLvThread extends Thread {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
     RequestConfig defaultRequestConfig = RequestConfig.custom()
             .setSocketTimeout(10000)
@@ -28,7 +28,7 @@ public class GetThread extends Thread {
     private CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(defaultRequestConfig).build();
     private File  file;
     private String  ticker;
-    public GetThread(File file, String ticker) {
+    public GetShouLvThread(File file, String ticker) {
         this.file= file;
         this.ticker=ticker;
 

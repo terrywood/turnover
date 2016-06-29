@@ -6,6 +6,7 @@ import app.service.HuanShouLvService;
 import app.service.StockDayService;
 import app.service.StockService;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,8 +23,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
-import java.io.File;
+import java.util.Date;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 @EnableTransactionManagement
 @EnableCaching
@@ -58,6 +62,11 @@ public class Application extends SpringBootServletInitializer {
         // return super.configure(builder);
     }
 
+    @Bean(destroyMethod = "shutdown")
+    public Executor taskScheduler() {
+        return Executors.newScheduledThreadPool(5);
+    }
+
     public static void main(String[] args) throws Exception {
         SpringApplication.run(Application.class);
         /*ApplicationContext ctx = SpringApplication.run(Application.class, args);
@@ -72,47 +81,30 @@ public class Application extends SpringBootServletInitializer {
     }
 
 
-   // @Bean
-    public CommandLineRunner stock() {
-        return (args) -> {
-            stockService.getInfo();
-        };
-    }
-
+    private SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 
     //@Bean
-    public CommandLineRunner daily() {
+    public CommandLineRunner everydayAfter1500() {
         return (args) -> {
-            //stockDayService.getAndSaveInfo();
-            stockDayService.saveInfo2DB();
-        };
-    }
-    @Bean
-    public CommandLineRunner huanShouLv() {
-        return (args) -> {
-
-
-          /*  huanShouLvService.fetchPieRaw();
+            long start = System.currentTimeMillis();
+            Date today = DateUtils.truncate(new java.util.Date(), Calendar.DATE);
+            stockService.getInfoAnaSaveStock2DB();
+            System.out.println("use time fetch data ok step 1");
+            huanShouLvService.fetchPieRaw();
+            System.out.println("use time fetch data ok step 2");
             huanShouLvService.fetchBoomRaw();
+            System.out.println("use time fetch data ok step 3");
             huanShouLvService.fetchSurgeRaw();
-
-            String folder ="D:\\Terry\\cloud\\OneDrive\\data\\huanshoulv_raw\\pie";
-            File f = new File(folder);
-            for(File file : f.listFiles()){
-                String day = file.getName();
-                System.out.println(day);
-                huanShouLvService.save2DB(day);
-            }*/
-
+            System.out.println("use time fetch data ok step 4");
+            huanShouLvService.save2DB(sdf.format(today));
+            System.out.println("use time fetch data ok step 5");
             huanShouLvService.fetchStockExtend();
-        };
-    }
+            System.out.println("use time fetch data ok step 6");
+            stockDayService.getAndSaveInfo();
+            System.out.println("use time fetch data ok step 8");
+            long end = (System.currentTimeMillis() - start )/1000;
+            System.out.println("use time fetch data ["+end+"]");
 
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-
-    //@Bean
-    public CommandLineRunner day() {
-        return (args) -> {
         };
     }
 

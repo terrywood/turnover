@@ -5,19 +5,10 @@ import app.repository.StockRepository;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.input.BOMInputStream;
-import org.apache.http.HttpEntity;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
@@ -61,7 +52,7 @@ public class StockService {
 
 
 
-    public void getInfo() throws IOException {
+    public void getInfoAnaSaveStock2DB() throws IOException {
       /*  File file = File.createTempFile("csv", "csv");
         FileUtils.copyURLToFile(new URL(ALL), file);
         Reader in = new FileReader(file);
