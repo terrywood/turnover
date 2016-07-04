@@ -17,12 +17,29 @@
 </head>
 <body>
 
+
 <div class="container-fluid">
+  <%--  <ul class="nav nav-pills">
+        <li role="presentation" class="active"><a href="#">Home</a></li>
+        <li role="presentation"><a href="#">Profile</a></li>
+        <li role="presentation"><a href="#">Messages</a></li>
+    </ul>--%>
+    <form class="navbar-form navbar-left" role="search" action="press">
+        <div class="form-group">
+            <input type="text" name="date" class="form-control" value="2016-06-02" placeholder="Date">
+        </div>
+        <div class="form-group">
+            <input type="text" class="form-control" placeholder="Search">
+        </div>
+        <button type="submit" class="btn btn-default">Submit</button>
+    </form>
+
     <div class="row-fluid">
         <div class="span12">
             <form id="pagerForm" action="">
                 <input type="hidden" id="_pageNum" name="page" value="${pageList.number+1}" />
                 <input type="hidden" id="_pageSize" name="size" value="${pageList.size}" />
+                <input type="hidden" id="date" name="date" value="${param.date}" />
             </form>
             <table class="table table-condensed">
                 <thead>
@@ -30,9 +47,8 @@
                     <th>时间</th>
                     <th>股票</th>
                     <th>收盘价</th>
-                   <%-- <th>+1</th>
-                    <th>+3</th>
-                    <th>+5</th>--%>
+                    <th>DDX</th>
+                    <th>DDY</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -41,32 +57,25 @@
                     <td><fmt:formatDate value="${item.date}" pattern="yyyy-MM-dd"></fmt:formatDate></td>
                     <td >${item.stock.id}</td>
                     <td >${item.stock.name}</td>
-                <%--    <td ><fmt:formatNumber  type="percent" value="${(item.greater[0].close - item.close )/item.close}"></fmt:formatNumber>
+                    <td >${item.ddx}</td>
+                    <td >${item.ddy}</td>
+                   <td ><fmt:formatNumber  type="percent" value="${(item.greater[0].close - item.stockDay.close )/item.stockDay.close}"></fmt:formatNumber>
                         <br/>
                         <fmt:formatDate value="${item.greater[0].date}" pattern="yyyy-MM-dd"></fmt:formatDate>
                     </td>
-                    <td ><fmt:formatNumber  type="percent" value="${(item.greater[2].close - item.close )/item.close}"></fmt:formatNumber>
+                    <td ><fmt:formatNumber  type="percent" value="${(item.greater[2].close - item.stockDay.close )/item.stockDay.close}"></fmt:formatNumber>
                         <br/>
                         <fmt:formatDate value="${item.greater[2].date}" pattern="yyyy-MM-dd"></fmt:formatDate>
                     </td>
-                    <td ><fmt:formatNumber  type="percent" value="${(item.greater[4].close - item.close )/item.close}"></fmt:formatNumber>
+                    <td ><fmt:formatNumber  type="percent" value="${(item.greater[4].close - item.stockDay.close )/item.stockDay.close}"></fmt:formatNumber>
                         <br/>
                         <fmt:formatDate value="${item.greater[4].date}" pattern="yyyy-MM-dd"></fmt:formatDate>
-                    </td>--%>
+                    </td>
                 </tr>
                 </c:forEach>
                 </tbody>
             </table>
-           <%-- <ul class="pagination">
-                <li><a href="#">&laquo;</a></li>
-                <li><a href="#">1</a></li>
-                <li><a href="#">2</a></li>
-                <li><a href="#">3</a></li>
-                <li><a href="#">4</a></li>
-                <li><a href="#">5</a></li>
-                <li><a href="#">&raquo;</a></li>
-            </ul>
-         --%>
+
             <c:import url="../common/pageBar.jsp"></c:import>
         </div>
     </div>

@@ -8,11 +8,9 @@ import app.util.AppUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.beanutils.BeanUtilsBean;
 import org.apache.commons.collections.MapUtils;
-import org.apache.commons.csv.CSVRecord;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.time.DateFormatUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -28,7 +26,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.http.converter.json.GsonBuilderUtils;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -42,12 +39,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.*;
 
 /**
  * Created by terry.wu on 2016/5/18 0018.
@@ -160,9 +154,9 @@ public class HuanShouLvService {
      * 再观察被动买单均手>=被动卖单均手，同时被动买单均手>=主动买单均手，说明主力看好后市，压盘吃货。
      * select s  from FundFlowPieSlave s , FundFlowPieMaster m where s.totalBuyShou>=s.totalSellShou and s.totalBuyShou>= m.totalBuyShou
      */
-    public Page<FundFlowPie> findPressEat(int page, int size) throws ParseException {
+    public Page<FundFlowPie> findPressEat(int page, int size, Date date) throws ParseException {
         Pageable pageable = new PageRequest(page, size, new Sort(Sort.Direction.ASC, "id"));
-        Date date = sdf.parse("20160602");
+        //Date date = sdf.parse("20160602");
         Page<FundFlowPie> list = fundFlowPieRepository.findPressEat(date,pageable);
 
       /*  Specification spec;

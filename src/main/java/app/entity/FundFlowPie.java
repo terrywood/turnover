@@ -41,14 +41,8 @@ public class FundFlowPie implements java.io.Serializable {
     Double sanPrice;
     Double masterLv;
 
-
-/*
-    @Lob
-    @Basic(fetch = FetchType.LAZY)
-    @Column(name="content", columnDefinition="mediumtext", nullable=true)
-    String detail;
-*/
-
+    @Transient
+    java.util.List<StockDay> greater;
 
     @ManyToOne(cascade = {CascadeType.REFRESH}, fetch = FetchType.LAZY)
     @JoinColumn(name = "stock_id",referencedColumnName = "id")
@@ -67,6 +61,10 @@ public class FundFlowPie implements java.io.Serializable {
     @OneToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL})
     @PrimaryKeyJoinColumn
     private FundFlowPieSlave fundFlowPieSlave;
+
+    @OneToOne(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @PrimaryKeyJoinColumn
+    private StockDay stockDay;
 
 
 }

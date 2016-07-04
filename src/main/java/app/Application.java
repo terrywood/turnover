@@ -60,7 +60,8 @@ public class Application extends SpringBootServletInitializer {
     @Override
     protected SpringApplicationBuilder configure(SpringApplicationBuilder builder) {
         return builder.sources(Application.class);
-        // return super.configure(builder);
+        // return super.configure(builder);+
+
     }
 
     @Bean(destroyMethod = "shutdown")
@@ -97,7 +98,7 @@ public class Application extends SpringBootServletInitializer {
         };
     }
 
-   // @Bean
+   @Bean
     public CommandLineRunner everydayAfter1500() {
         return (args) -> {
             SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");

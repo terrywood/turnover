@@ -2,6 +2,8 @@ package app.service;
 
 import app.bean.ApiDayResult;
 import app.entity.Stock;
+import app.entity.StockDay;
+import app.repository.StockDayRepository;
 import app.repository.StockRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.FilenameUtils;
@@ -11,6 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +41,8 @@ public class StockDayService {
     private  String path;
     @Autowired
     private StockRepository stockRepository;
+    @Autowired
+    private StockDayRepository stockDayRepository;
     @Autowired
     ObjectMapper jacksonObjectMapper;
     @Autowired
@@ -96,5 +103,10 @@ public class StockDayService {
         }
         log.info("线程池已经关闭");
         updateStockOutstanding(DateUtils.truncate(new Date(), Calendar.DATE));
+    }
+
+    public List<StockDay> findByCodeAndIdGreaterThan(String id, long id1, int i) {
+        Pageable page = new PageRequest(0,i, Sort.Direction.ASC,"id");
+        return  stockDayRepository.findByStockIdAndIdGreaterThan(id,id1,page);
     }
 }
