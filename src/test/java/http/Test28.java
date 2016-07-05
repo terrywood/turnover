@@ -95,7 +95,7 @@ public class Test28 {
             }
 
         }else{
-            System.out.println("空仓!");
+            System.out.println("卖出回购204001!");
         }
        // System.out.println("创业板昨天收盘价["+list.get(list.size()-1)[3]+"]["+cybA[2]+"] 黄金昨天收盘价["+list2.get(list2.size()-1)[3]+"]["+hjA[2]+"] ");
 
